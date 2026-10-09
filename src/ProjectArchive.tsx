@@ -18,6 +18,8 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
  const es=lang==='es',labels=es?['Gráfico','Web','App','3D']:['Graphic','Web','App','3D'];
  const [filter,setFilter]=useState(-1),[all,setAll]=useState(false),[cursor,setCursor]=useState(0);
  const [panel,setPanel]=useState<'index'|'detail'|'lab'|null>(null),[query,setQuery]=useState(''),[lab,setLab]=useState(0);
+ const [controlsOpen,setControlsOpen]=useState(false);
+ const controlsRoot=useRef<HTMLDivElement>(null),controlsTrigger=useRef<HTMLButtonElement>(null);
  const dialog=useRef<HTMLDialogElement>(null),returnTo=useRef<HTMLElement|null>(null),stage=useRef<HTMLDivElement>(null);
  const gesture=useRef<{x:number;y:number;pointer:number}|null>(null);
  const suppressClick=useRef(false);
@@ -29,7 +31,14 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
  const name=(p:Project)=>`${es?'Proyecto':'Project'} ${pad(p.id)}`;
  const selectFilter=(n:number)=>{setFilter(n);setCursor(0);};
  const step=(direction:number)=>{travel.current=direction;setCursor((index+direction+pool.length)%pool.length);};
- const open=(next:'index'|'detail'|'lab',trigger:HTMLElement)=>{returnTo.current=trigger;sourceRect.current=stage.current?.querySelector('.archive-art')?.getBoundingClientRect()??null;setPanel(next);};
+ const open=(next:'index'|'detail'|'lab',trigger:HTMLElement)=>{returnTo.current=controlsRoot.current?.contains(trigger)?controlsTrigger.current:trigger;setControlsOpen(false);sourceRect.current=stage.current?.querySelector('.archive-art')?.getBoundingClientRect()??null;setPanel(next);};
+ useEffect(()=>{
+  if(!controlsOpen)return;
+  const outside=(e:PointerEvent)=>{if(!controlsRoot.current?.contains(e.target as Node))setControlsOpen(false);};
+  const escape=(e:KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();setControlsOpen(false);controlsTrigger.current?.focus();}};
+  document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);
+  return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
+ },[controlsOpen]);
  const finishClose=()=>{closing.current=false;setPanel(null);};
  const close=()=>{
   if(closing.current)return;
@@ -51,7 +60,7 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
   },el);
   return()=>{detailMotion.current?.kill();ctx.revert();};
  },[panel]);
- useEffect(()=>{if(!isActive)setPanel(null);},[isActive]);
+ useEffect(()=>{if(!isActive){setPanel(null);setControlsOpen(false);}},[isActive]);
  useEffect(()=>{
   if(!isActive||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const ctx=gsap.context(()=>{
@@ -62,8 +71,15 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
  },[project.id,isActive]);
  const visible=projects.filter(p=>(filter===-1||p.discipline===filter)&&(`${name(p)} ${labels[p.discipline]}`).toLowerCase().includes(query.toLowerCase()));
  return <>
-  <div className="archive-heading"><KineticTitle first={es?'En':'In'} second={es?'juego.':'play.'} variant="work"/><div className="archive-tools"><button onClick={e=>open('index',e.currentTarget)}>{es?'Ver todos':'View all'} <span>24 <InlineIcon kind="arrow"/></span></button><button className="archive-lab-link" onClick={e=>open('lab',e.currentTarget)}>{es?'Laboratorio':'Laboratory'} <PieceIcon index={0}/></button></div></div>
-  <div className="archive-filters" role="group" aria-label={es?'Filtrar proyectos':'Filter projects'}>{[es?'Todo':'All',...labels].map((label,i)=><button key={label} aria-pressed={filter===i-1} onClick={()=>selectFilter(i-1)}>{label}<span className="archive-filter-icon"><InlineIcon kind="arrow"/></span></button>)}</div>
+  <div className="archive-heading"><KineticTitle first={es?'En':'In'} second={es?'juego.':'play.'} variant="work"/><div className="archive-browser" ref={controlsRoot}>
+   <button ref={controlsTrigger} className="archive-browser-trigger" aria-expanded={controlsOpen} aria-controls="project-controls" onClick={()=>setControlsOpen(!controlsOpen)}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 17h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="9" cy="7" r="3" fill="var(--bg)" stroke="currentColor" strokeWidth="1.5"/><circle cx="15" cy="17" r="3" fill="var(--bg)" stroke="currentColor" strokeWidth="1.5"/></svg>{es?'Explorar':'Explore'}<span className="archive-browser-chevron"><InlineIcon kind="down"/></span></button>
+   <div className="archive-browser-panel" id="project-controls" hidden={!controlsOpen}>
+    <div className="archive-browser-filters" role="group" aria-label={es?'Filtrar proyectos':'Filter projects'}>{[es?'Todo':'All',...labels].map((label,i)=><button key={label} aria-pressed={filter===i-1} onClick={()=>{selectFilter(i-1);setControlsOpen(false);controlsTrigger.current?.focus();}}>{label}{filter===i-1&&<InlineIcon kind="check"/>}</button>)}</div>
+    <div className="archive-browser-scope" role="group" aria-label={es?'Selección de proyectos':'Project selection'}>{[false,true].map(scope=><button key={String(scope)} aria-pressed={all===scope} onClick={()=>{setAll(scope);setCursor(0);setControlsOpen(false);controlsTrigger.current?.focus();}}>{scope?(es?'Todos':'All'):(es?'Destacados':'Featured')}</button>)}</div>
+    <button className="archive-browser-action" onClick={e=>open('index',e.currentTarget)}>{es?'Abrir archivo':'Open archive'}<span>24 <InlineIcon kind="arrow"/></span></button>
+    <button className="archive-browser-action" onClick={e=>open('lab',e.currentTarget)}>{es?'Laboratorio':'Laboratory'}<PieceIcon index={0}/></button>
+   </div>
+  </div></div>
   <div className="archive-stage" ref={stage} role="group" tabIndex={0} aria-label={es?'Explorador de proyectos. Usa las flechas izquierda y derecha.':'Project explorer. Use left and right arrows.'}
    onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();step(e.key==='ArrowRight'?1:-1);}}}
    onPointerDown={e=>{if((e.target as Element).closest('.archive-current-copy button')||e.button!==0)return;suppressClick.current=false;gesture.current={x:e.clientX,y:e.clientY,pointer:e.pointerId};}}
@@ -73,7 +89,7 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
    <button className="archive-front" onClick={e=>{if(e.detail===0||!suppressClick.current)open('detail',e.currentTarget);}} aria-label={`${es?'Abrir':'Open'} ${name(project)}`}><Artwork project={project}/><span className="archive-open-cue" aria-hidden="true"><InlineIcon kind="arrow"/></span></button>
    <div className="archive-current-copy" aria-live="polite"><span>{labels[project.discipline]} <span className="archive-sample">/ {es?'Provisional':'Placeholder'}</span></span><h3>{name(project)}</h3><button onClick={e=>open('detail',e.currentTarget)}>{es?'Abrir':'Open'} <InlineIcon kind="arrow"/></button></div>
   </div>
-  <div className="archive-bottom"><button className="archive-scope" aria-pressed={all} onClick={()=>{setAll(!all);setCursor(0);}}>{all?(es?'Todos':'All projects'):(es?'Destacados':'Featured')} <span><InlineIcon kind="arrow"/></span></button><span className="archive-drag-hint">{es?'Arrastra para explorar':'Drag to explore'}</span><div className="archive-paging"><button onClick={()=>step(-1)} aria-label={es?'Proyecto anterior':'Previous project'}><InlineIcon kind="back"/></button><span aria-live="polite">{pad(index+1)} <span>/ {pad(pool.length)}</span></span><button onClick={()=>step(1)} aria-label={es?'Proyecto siguiente':'Next project'}><InlineIcon kind="next"/></button></div></div>
+  <div className="archive-bottom"><div className="archive-paging"><button onClick={()=>step(-1)} aria-label={es?'Proyecto anterior':'Previous project'}><InlineIcon kind="back"/></button><span aria-live="polite">{pad(index+1)} <span>/ {pad(pool.length)}</span></span><button onClick={()=>step(1)} aria-label={es?'Proyecto siguiente':'Next project'}><InlineIcon kind="next"/></button></div></div>
   <dialog className={`archive-dialog archive-dialog-${panel}`} ref={dialog} aria-labelledby="archive-dialog-title" onCancel={e=>{e.preventDefault();close();}} onClick={e=>{if(e.target===e.currentTarget)close();}}>
    <div className="archive-dialog-header"><h2 id="archive-dialog-title">{panel==='index'?(es?'El archivo.':'The archive.'):panel==='lab'?(es?'Laboratorio.':'Laboratory.'):name(project)}</h2><button onClick={close} aria-label={es?'Cerrar':'Close'}><InlineIcon kind="close"/></button></div>
    {panel==='index'&&<><label className="archive-search">{es?'Encontrar un proyecto':'Find a project'}<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={es?'Nombre o disciplina…':'Name or discipline…'}/></label><div className="archive-index-filters" role="group" aria-label={es?'Filtrar archivo':'Filter archive'}>{[es?'Todo':'All',...labels].map((label,i)=><button key={label} aria-pressed={filter===i-1} onClick={()=>selectFilter(i-1)}>{label}<span className="archive-filter-icon"><InlineIcon kind="arrow"/></span></button>)}</div><div className="archive-index">{visible.map(p=><button key={p.id} onClick={()=>{setAll(true);setCursor(projects.filter(v=>filter===-1||v.discipline===filter).findIndex(v=>v.id===p.id));close();}}><Artwork project={p} mini/><span><strong>{name(p)}</strong><small>{labels[p.discipline]}</small></span><span aria-hidden="true"><InlineIcon kind="arrow"/></span></button>)}</div>{!visible.length&&<p>{es?'No hay resultados. Prueba otra búsqueda.':'No results. Try another search.'}</p>}<p className="archive-disclosure">{es?'24 proyectos provisionales · vista de prueba.':'24 placeholder projects · preview.'}</p></>}

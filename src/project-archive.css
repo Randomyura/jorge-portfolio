@@ -124,3 +124,28 @@
 .archive-dialog-detail .graphic-object{translate:-.25em 0}
 .archive-dialog-detail .discipline-object{font-size:clamp(150px,20vw,260px)}
 @media(max-width:600px){.archive-dialog-detail .discipline-object{font-size:150px}}
+
+/* One disclosure gathers the archive controls instead of scattered labels. */
+.archive-browser{position:relative;z-index:8;isolation:isolate}
+.archive-screen .archive-browser-trigger{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:0 18px;border-radius:28px;background:color-mix(in srgb,var(--ink) 7%,transparent);font-size:14px;transition:background .2s}
+.archive-browser-trigger>svg{width:22px;height:22px}.archive-browser-chevron svg{width:14px;height:14px;transition:transform .25s}.archive-browser-trigger[aria-expanded=true] .archive-browser-chevron svg{transform:rotate(180deg)}
+.archive-browser-trigger:hover{background:color-mix(in srgb,var(--signal) 15%,transparent)}
+.archive-browser-panel{position:absolute;bottom:calc(100% + 12px);left:0;width:272px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 160px);overflow-y:auto;padding:12px;border-radius:20px;background:var(--bg);color:var(--ink);box-shadow:0 16px 65px #080f2938;animation:archive-controls-in .25s ease-out}
+.archive-browser-panel[hidden]{display:none}
+.archive-browser-filters{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
+.archive-screen .archive-browser-filters button{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:10px 12px;border-radius:10px;text-align:left;font-size:13px}
+.archive-browser-filters button:first-child{grid-column:1/-1}.archive-browser-filters svg{width:16px;height:16px}
+.archive-screen .archive-browser-filters button[aria-pressed=true]{color:var(--signal);background:color-mix(in srgb,var(--signal) 12%,transparent)}
+.archive-browser-scope{display:flex;padding:4px;border-radius:24px;background:color-mix(in srgb,var(--ink) 5%,transparent);margin:10px 0}
+.archive-screen .archive-browser-scope button{flex:1;min-height:40px;border-radius:20px;font-size:12px;padding:6px}
+.archive-screen .archive-browser-scope button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.archive-screen .archive-browser-action{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;font-size:13px;text-align:left}
+.archive-browser-action>span{display:flex;align-items:center;gap:10px;opacity:.65}.archive-browser-action svg{width:18px;height:18px}
+.archive-browser-panel button:hover{background:color-mix(in srgb,var(--signal) 10%,transparent)}
+.archive-screen .archive-bottom{justify-content:center;grid-column:2}
+@keyframes archive-controls-in{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:600px){.fixed-screens .work.archive-screen{grid-template-rows:auto minmax(0,1fr) auto}.archive-browser-panel{bottom:auto;top:calc(100% + 10px);left:auto;right:0;width:256px}.archive-screen .archive-browser-trigger{font-size:12px;min-height:44px;padding:0 12px;gap:8px}.archive-browser-trigger>svg{width:18px;height:18px}.archive-browser-chevron{display:none}.archive-screen .archive-stage{grid-row:2}.archive-screen .archive-bottom{grid-column:1;grid-row:3}}
+@media(prefers-reduced-motion:reduce){.archive-browser-panel{animation:none}.archive-browser-chevron svg,.archive-browser-trigger{transition:none}}
+
+.fixed-screens main>section.archive-screen>.archive-heading{z-index:8}
+
