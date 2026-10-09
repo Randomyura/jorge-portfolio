@@ -32,3 +32,9 @@
 @media(max-width:600px) and (max-height:700px){.fixed-screens .piece-field.navigation-field{min-height:170px!important;max-height:170px!important}}
 .fixed-screens .portfolio-footer{background:var(--screen-bg);padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}.fixed-screens header{padding-top:calc(16px + env(safe-area-inset-top,0px))}
 @media(max-width:600px){.fixed-screens header{padding-top:calc(11px + env(safe-area-inset-top,0px))}.fixed-screens .portfolio-footer{padding-bottom:calc(3px + env(safe-area-inset-bottom,0px))}}
+
+/* One compact instruction row keeps the pieces as the main focus. */
+.fixed-screens .hero-bottom{flex-wrap:nowrap;justify-content:space-between}
+.fixed-screens .hero-bottom>div{order:0;width:auto;min-width:0;flex-wrap:wrap;gap:8px 16px}
+.fixed-screens .hero-bottom .scroll-link{flex-shrink:0}
+@media(max-width:600px){.fixed-screens .hero-bottom>div{font-size:12px!important;max-width:calc(100% - 54px)}}

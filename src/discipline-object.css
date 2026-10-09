@@ -44,3 +44,9 @@
 @media(max-width:600px){.discipline-object{font-size:min(58vw,27vh)}.object-floor{bottom:8%;filter:blur(11px)}.archive-detail-layout .discipline-object{font-size:180px}}
 @media(max-width:600px) and (max-height:700px){.discipline-object{font-size:145px}.object-floor{bottom:3%;height:9%;filter:blur(9px)}}
 @media(prefers-reduced-motion:reduce){.object-float,.object-floor,.web-cursor,.phone-tile>span,.spatial-object{animation:none!important}.object-tilt{transform:none!important;transition:none}}
+
+/* Leave breathing room for the extruded lettering on narrow screens. */
+@media(max-width:600px){.archive-stage .discipline-object{font-size:min(44vw,24vh)}}
+@media(max-width:600px) and (max-height:700px){.archive-stage .discipline-object{font-size:min(40vw,130px)}}
+
+.archive-stage .graphic-object{translate:-.25em 0}

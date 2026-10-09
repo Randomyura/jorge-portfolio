@@ -3,8 +3,8 @@ import gsap from 'gsap';
 import type {TransitionOrigin} from './screenMotion';
 import {PieceIcon,InlineIcon} from './PieceIcon';
 const destinations=['work','about','contact'],symbols=['✳','↗','◒'];
-type Props={lang:'es'|'en',labels:string[],intro:string,hint:string,isActive:boolean,onNavigate:(id:string,origin?:TransitionOrigin)=>void};
-export function PieceNavigation({lang,labels,intro,hint,isActive,onNavigate}:Props){
+type Props={lang:'es'|'en',labels:string[],hint:string,isActive:boolean,onNavigate:(id:string,origin?:TransitionOrigin)=>void};
+export function PieceNavigation({lang,labels,hint,isActive,onNavigate}:Props){
  const [selected,setSelected]=useState<number|null>(null),[near,setNear]=useState(false),[snapping,setSnapping]=useState(false);
  const field=useRef<HTMLDivElement>(null),socket=useRef<HTMLSpanElement>(null),busy=useRef(false),snap=useRef<gsap.core.Tween|null>(null);
  const destination=useRef<HTMLDivElement>(null),lastSpot=useRef<{x:number,y:number}|null>(null);
@@ -63,5 +63,5 @@ export function PieceNavigation({lang,labels,intro,hint,isActive,onNavigate}:Pro
    <span className="toy-object"><span className="toy-symbol"><PieceIcon index={i}/></span></span><small>{labels[i]}</small>
   </button>)}
   <div ref={destination} className="piece-destination roaming-destination" style={{left:spot?.x??8,top:spot?.y??8,visibility:selected!==null&&spot?'visible':'hidden'}} aria-live="polite">{selected!==null&&<button key={selected} className={`piece-slot slot-${selected} ${near?'is-near':''}`} onClick={()=>{const el=field.current!.querySelector<HTMLButtonElement>(`[data-piece="${selected}"]`);if(el)docking(el);}} aria-label={`${lang==='es'?'Abrir':'Open'} ${labels[selected]}`}><span ref={socket} data-socket className="piece-silhouette" aria-hidden="true"><PieceIcon index={selected}/></span><span className="piece-slot-label">{near?(lang==='es'?'Aquí':'Here'):labels[selected]} <span aria-hidden="true"><InlineIcon kind="arrow"/></span></span></button>}</div>
- </div><div className="hero-bottom"><p>{intro}</p><div><span>{selected!==null?(lang==='es'?'Arrastra a su silueta. O vuelve a tocarla.':'Drag to its silhouette. Or tap it again.'):hint}</span>{selected!==null&&<button className="reset" onClick={reset}>{lang==='es'?'Otra vez':'Play again'} <InlineIcon kind="reset"/></button>}</div><a className="scroll-link" href="#work" aria-label={labels[0]}><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></a></div></>;
+ </div><div className="hero-bottom"><div><span>{selected!==null?(lang==='es'?'Encaja o toca otra vez.':'Fit or tap again.'):hint}</span>{selected!==null&&<button className="reset" onClick={reset}>{lang==='es'?'Otra vez':'Play again'} <InlineIcon kind="reset"/></button>}</div><a className="scroll-link" href="#work" aria-label={labels[0]}><svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></a></div></>;
 }
