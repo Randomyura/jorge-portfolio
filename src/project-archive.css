@@ -101,3 +101,26 @@
 }
 @media(max-width:600px) and (max-height:700px){.fixed-screens .work.archive-screen{padding:12px 5%;gap:6px}.archive-heading .kinetic-title{font-size:12vw}.archive-tools button{min-height:36px}.archive-tools .archive-lab-link{min-height:26px}.archive-filters button{font-size:13px;min-height:36px}.archive-stage{gap:3px}.archive-screen .archive-front{height:145px;max-height:60%}.archive-stage .art-mark{width:120px;height:120px;font-size:120px}.archive-stage .art-1 .art-mark,.archive-stage .art-2 .art-mark{width:105px;height:105px;font-size:76px}.archive-stage .art-3 .art-mark{font-size:130px}.archive-stage .archive-preview-label{font-size:8px;bottom:-2px}.archive-current-copy h3{font-size:27px;margin:6px 0 0}.archive-current-copy>button{min-height:34px}}
 @media(prefers-reduced-motion:reduce){.archive-stage .art-mark{animation:none!important;translate:none}}
+
+/* The selected object unfolds into a quiet, spacious project view. */
+.archive-open-cue{position:absolute;right:12%;bottom:12%;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:var(--signal);color:var(--bg);opacity:0;transform:translateY(12px) scale(.8);transition:opacity .25s,transform .35s;pointer-events:none}
+.archive-front:hover .archive-open-cue,.archive-front:focus-visible .archive-open-cue{opacity:1;transform:none}
+.archive-open-cue svg{width:22px;height:22px}
+.archive-dialog-detail[open]{animation:none;width:min(1240px,94vw);padding:clamp(20px,4vw,52px);border:0;border-radius:28px;overflow-x:hidden;background:var(--bg);color:var(--ink)}
+.dark .archive-dialog-detail{background:var(--bg)}
+.archive-dialog-detail::backdrop{background:color-mix(in srgb,var(--bg) 65%,transparent);backdrop-filter:blur(18px)}
+.archive-dialog-detail .archive-dialog-header{margin-bottom:8px}
+.archive-dialog-detail .archive-dialog-header h2{margin:0;font-size:clamp(24px,3vw,42px)}
+.archive-dialog-detail .archive-detail-layout{grid-template-columns:1.4fr 1fr;gap:clamp(24px,5vw,72px);min-height:400px}
+.archive-dialog-detail .archive-detail-layout>.archive-art{height:clamp(300px,48vh,520px);overflow:visible;background:transparent;border-radius:0}
+.archive-detail-copy{position:relative;z-index:1}
+.archive-dialog-detail .archive-detail-discipline{display:block;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:clamp(58px,7vw,110px);letter-spacing:-.045em;line-height:1;color:var(--signal)}
+.archive-dialog-detail .archive-detail-copy p{max-width:270px;font-size:14px;line-height:1.6;opacity:.75;margin:24px 0}
+.archive-dialog-detail .archive-detail-back{display:inline-flex;align-items:center;gap:14px;background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)!important;margin-top:8px;font-size:13px}
+.archive-dialog-detail .archive-detail-back:hover{background:color-mix(in srgb,var(--signal) 16%,transparent)}
+@media(max-width:600px){.archive-dialog-detail[open]{padding:22px;border-radius:20px}.archive-dialog-detail .archive-detail-layout{grid-template-columns:1fr;gap:12px;min-height:0}.archive-dialog-detail .archive-detail-layout>.archive-art{height:230px}.archive-dialog-detail .archive-detail-discipline{font-size:64px}.archive-dialog-detail .archive-detail-copy p{margin:16px 0}.archive-dialog-detail .discipline-object{font-size:150px}.archive-dialog-detail .graphic-object{translate:-.25em 0}.archive-open-cue{display:none}}
+@media(prefers-reduced-motion:reduce){.archive-open-cue{transition:none}}
+
+.archive-dialog-detail .graphic-object{translate:-.25em 0}
+.archive-dialog-detail .discipline-object{font-size:clamp(150px,20vw,260px)}
+@media(max-width:600px){.archive-dialog-detail .discipline-object{font-size:150px}}
