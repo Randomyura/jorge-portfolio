@@ -38,3 +38,6 @@
 .fixed-screens .hero-bottom>div{order:0;width:auto;min-width:0;flex-wrap:wrap;gap:8px 16px}
 .fixed-screens .hero-bottom .scroll-link{flex-shrink:0}
 @media(max-width:600px){.fixed-screens .hero-bottom>div{font-size:12px!important;max-width:calc(100% - 54px)}}
+
+/* Lower the resting pieces on desktop without changing their drag transforms. */
+@media(min-width:801px){.fixed-screens .piece-field.navigation-field .toy{top:clamp(32px,7vh,84px)}}
