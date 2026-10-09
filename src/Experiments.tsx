@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,type CSSProperties} from 'react';
-import {PieceIcon} from './PieceIcon';
+import {PieceIcon,InlineIcon} from './PieceIcon';
 
 export function LivingField({variant='home'}:{variant?:'home'|'work'|'about'|'contact'}){
  const canvas=useRef<HTMLCanvasElement>(null);
@@ -78,7 +78,7 @@ export function Experiment({index,lang}:{index:number,lang:'es'|'en'}){
    {index===2&&<button className="play-app" onClick={()=>setTaps(n=>n+1)}><small>{taps<6?(es?'Toca para componer':'Tap to compose'):(es?'Sigue tocando para transformar':'Keep tapping to transform')}</small><div className="app-bubbles">{Array.from({length:Math.min(taps+3,9)},(_,i)=><span key={i} style={{background:['#8fa9ff','#d9dde6','#a9b4ce'][i%3],transform:`rotate(${(taps+i)*23}deg)`,borderRadius:`${15+(taps+i)%4*15}%`}}><PieceIcon index={i%3}/></span>)}</div><strong>{String(taps).padStart(2,'0')} / PLAY</strong></button>}
    {index===3&&<div className="sculpture-control" role="slider" tabIndex={0} aria-label={es?'Girar escultura':'Rotate sculpture'} aria-valuemin={0} aria-valuemax={360} aria-valuenow={Math.round((rotation.y%360+360)%360)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();setRotation(r=>({x:r.x+(e.key==='ArrowUp'?-15:e.key==='ArrowDown'?15:0),y:r.y+(e.key==='ArrowLeft'?-15:e.key==='ArrowRight'?15:0)}));}}} onPointerDown={e=>{e.currentTarget.setPointerCapture(e.pointerId);drag.current={x:e.clientX,y:e.clientY,rx:rotation.x,ry:rotation.y};}} onPointerMove={e=>{if(drag.current)setRotation({x:drag.current.rx-(e.clientY-drag.current.y)*.6,y:drag.current.ry+(e.clientX-drag.current.x)*.6});}} onPointerUp={()=>{drag.current=null;}} onPointerCancel={()=>{drag.current=null;}}><div className="sculpture" style={{transform:`rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`}}>{Array.from({length:9},(_,i)=><span key={i} style={{transform:`translateZ(${(i-4)*18}px) rotateZ(${i*8}deg)`}}/>)}</div><small>{es?'Arrastra para girar · o usa las flechas':'Drag to rotate · or use arrow keys'}</small></div>}
   </div>
-  {index<2?<label className="experiment-slider">{index===0?(es?'De rígido a líquido':'From rigid to liquid'):(es?'Cambia la órbita':'Change the orbit')}<input type="range" min="0" max="100" value={value} onChange={e=>setValue(Number(e.target.value))}/></label>:index===2&&taps>0?<button className="experiment-reset" onClick={()=>setTaps(0)}>{es?'Limpiar composición':'Clear composition'} ↺</button>:null}
+  {index<2?<label className="experiment-slider">{index===0?(es?'De rígido a líquido':'From rigid to liquid'):(es?'Cambia la órbita':'Change the orbit')}<input type="range" min="0" max="100" value={value} onChange={e=>setValue(Number(e.target.value))}/></label>:index===2&&taps>0?<button className="experiment-reset" onClick={()=>setTaps(0)}>{es?'Limpiar composición':'Clear composition'} <InlineIcon kind="reset"/></button>:null}
  </div>;
 }
 

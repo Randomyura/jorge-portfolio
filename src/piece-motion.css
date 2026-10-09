@@ -16,7 +16,8 @@
 .piece-field .toy-1,.piece-field .toy-1 .toy-object{border-radius:50%;aspect-ratio:1}
 .piece-field:has(.is-dragging),.piece-field:has(.toy.selected:focus-visible),.piece-field.piece-snapping{z-index:6}
 .piece-field .toy small{transition:opacity .2s}
-.toy-symbol{display:grid;place-items:center;line-height:1}
+.piece-field .toy .toy-symbol{position:absolute;inset:0;display:grid;place-items:center;line-height:0;transform-origin:50% 50%}
+.piece-field .toy-symbol>.piece-icon{display:block!important;vertical-align:initial}
 .toy-1 .toy-symbol .piece-icon,.toy-2 .toy-symbol .piece-icon{width:.72em;height:.72em}
 @media(max-width:600px){.fixed-screens .piece-field{--drift-x:5px}.fixed-screens .piece-field .toy-2{left:74%}}
 .piece-destination{position:absolute;inset:auto 0 0;display:flex;justify-content:center;min-height:88px;pointer-events:none}
