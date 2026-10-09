@@ -17,6 +17,7 @@ import {HeaderControls} from './HeaderControls';
 import {Footer} from './Footer';
 import './refinements.css';
 import {ProjectArchive} from './ProjectArchive';
+import {CursorExperience} from './CursorExperience';
 type Lang='es'|'en';
 const words={es:{work:'Proyectos',about:'Sobre mí',hello:'Hablemos',hint:'Elige una pieza. O sigue con scroll.',title:'Fuera del',second:'molde.',intro:'Gráfico. Web. App. 3D.',selected:'Cosas que he',made:'puesto en juego.',demo:'Conceptos de muestra · proyectos reales pendientes',bio:'Soy Jorge Sunyer Guirado. Me interesa lo que pasa cuando el diseño y el código dejan de ir por separado. Trabajo en diseño gráfico, web, app y 3D: distintas herramientas para dar forma a una idea.',cta:'¿Y si probamos',cta2:'algo distinto?',note:'Contacto real pendiente de configurar',reset:'Otra vez',close:'Cerrar',drag:'Pieza interactiva. Usa las flechas para moverla; Enter para girarla.',detail:'Este experimento es una muestra interactiva para explorar el portafolio, no un encargo real.'},en:{work:'Work',about:'About me',hello:'Let’s talk',hint:'Choose a piece. Or keep scrolling.',title:'Beyond the',second:'expected.',intro:'Graphic. Web. App. 3D.',selected:'Things I have',made:'put into play.',demo:'Sample concepts · real projects to be added',bio:'I’m Jorge Sunyer Guirado. I’m interested in what happens when design and code stop being separate. I work across graphic, web, app and 3D design: different tools to give an idea its shape.',cta:'What if we try',cta2:'something different?',note:'Real contact to be configured',reset:'Play again',close:'Close',drag:'Interactive piece. Use arrow keys to move it; Enter to rotate it.',detail:'This experiment is an interactive portfolio sample, not a client commission.'}};
 function App(){
@@ -86,6 +87,7 @@ function App(){
  <section className="about perspective-screen" id="about"><LivingField variant="about"/><div className="gallery-title"><KineticTitle first={lang==='es'?'Cruzar':'Fresh'} second={lang==='es'?'miradas.':'perspectives.'} variant="about"/></div><ProfilePlay lang={lang}/></section>
  <section className="contact letter-screen" id="contact"><LivingField variant="contact"/><div className="gallery-title"><KineticTitle first={lang==='es'?'Lo que':'What comes'} second={lang==='es'?'viene.':'next.'} variant="contact"/><p className="letter-intro">{lang==='es'?'Empieza con una idea.':'It starts with an idea.'}</p></div><ContactPlay lang={lang}/></section></main>
  <Footer lang={lang} screen={activeScreen}/>
+ <CursorExperience/>
  </div>;
 }
 const appRoot=createRoot(document.getElementById('root')!);

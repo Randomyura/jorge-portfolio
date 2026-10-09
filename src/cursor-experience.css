@@ -1,0 +1,12 @@
+.cursor-experience{position:fixed;inset:0;z-index:90;pointer-events:none!important;opacity:0;transition:opacity .3s;overflow:hidden}
+.cursor-experience.is-visible{opacity:1}
+.cursor-experience>span{position:absolute;left:0;top:0;pointer-events:none!important;border-radius:50%;will-change:transform}
+.cursor-point{width:5px;height:5px;background:var(--signal);opacity:.75;z-index:3}
+.cursor-halo{width:58px;height:58px;background:radial-gradient(ellipse,color-mix(in srgb,var(--signal) 23%,transparent),color-mix(in srgb,var(--signal) 8%,transparent) 45%,transparent 72%);z-index:2;transition:width .3s,height .3s,opacity .3s}
+.cursor-trail{width:35px;height:35px;background:radial-gradient(ellipse,color-mix(in srgb,var(--signal) 12%,transparent),transparent 70%);opacity:.65;transition:opacity .3s}
+.cursor-trail.trail-two{width:25px;height:25px;opacity:.4}
+.cursor-experience[data-mode=piece] .cursor-halo{width:36px;height:36px;opacity:1}
+.cursor-experience[data-mode=title] .cursor-halo{width:110px;height:45px;opacity:.85}
+.cursor-experience[data-mode=control] .cursor-halo{width:30px;height:30px;opacity:.65}
+.cursor-experience[data-mode=piece] .cursor-trail,.cursor-experience[data-mode=control] .cursor-trail{opacity:.2}
+@media(hover:none),(pointer:coarse),(prefers-reduced-motion:reduce){.cursor-experience{display:none!important}}
