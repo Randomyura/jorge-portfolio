@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.pnpm-store/
+.publish-github/
+*.zip
+.env
+.env.*
+!.env.example

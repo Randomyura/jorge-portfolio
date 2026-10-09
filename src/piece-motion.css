@@ -1,0 +1,48 @@
+/* Matching sockets and transitions driven by the destination object. */
+.navigation-transition.spatial-transition{background:transparent;perspective:1200px;transform:none}
+.spatial-transition>div{position:absolute;inset:0;background:var(--signal);visibility:hidden;backface-visibility:hidden;transform-style:preserve-3d}
+.transition-turn{background:linear-gradient(110deg,#405bc1,#294095)}
+.transition-fold-top{clip-path:polygon(0 0,100% 0,100% 40%,50% 72%,0 40%);background:#637ad2!important}
+.transition-fold-bottom{clip-path:polygon(0 40%,50% 72%,100% 40%,100% 100%,0 100%);background:#2b46aa!important}
+.piece-field .toy.selected{outline:none;filter:drop-shadow(0 8px 15px #2349dc30)}
+.piece-field .toy.selected .toy-object{animation-play-state:paused}
+.piece-field .toy.is-dragging,.piece-snapping .toy.selected{z-index:8!important;cursor:grabbing}
+/* The destination supplies the selected label; keep it out of the moving piece. */
+.piece-field .toy.selected small{opacity:0}
+.piece-field .toy::before{content:'';position:absolute;inset:-34px;border-radius:50%;pointer-events:none;z-index:-1;opacity:0;background:radial-gradient(ellipse,color-mix(in srgb,var(--bg) 92%,transparent) 30%,color-mix(in srgb,var(--bg) 75%,transparent) 58%,transparent 74%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);mask-image:radial-gradient(ellipse,#000 48%,transparent 73%);-webkit-mask-image:radial-gradient(ellipse,#000 48%,transparent 73%);transition:opacity .2s}
+.piece-field .toy.selected::before{opacity:1}
+.fixed-screens .piece-field .toy{padding:0}
+.piece-field .toy .toy-object{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:grid;place-items:center;background:inherit;border-radius:inherit;box-shadow:inherit}
+.piece-field .toy-1,.piece-field .toy-1 .toy-object{border-radius:50%;aspect-ratio:1}
+.piece-field:has(.is-dragging),.piece-field:has(.toy.selected:focus-visible),.piece-field.piece-snapping{z-index:6}
+.piece-field .toy small{transition:opacity .2s}
+.piece-destination{position:absolute;inset:auto 0 0;display:flex;justify-content:center;min-height:88px;pointer-events:none}
+.piece-slot{border:0;background:none;color:var(--ink);display:flex;align-items:center;gap:20px;padding:0 15px;min-height:88px;pointer-events:auto;text-align:left;animation:socket-reveal .35s ease-out;border-radius:10px}
+.piece-silhouette{width:80px;height:80px;display:grid;place-items:center;font-size:60px;color:color-mix(in srgb,var(--signal) 35%,var(--bg));transition:background .3s,color .3s,box-shadow .3s;outline:1px dashed color-mix(in srgb,var(--signal) 55%,transparent);outline-offset:4px;background:color-mix(in srgb,var(--signal) 4%,transparent);border-radius:4px;line-height:1}
+.slot-0 .piece-silhouette{outline:none;background:none;font-size:78px;text-shadow:0 0 1px var(--signal)}
+.slot-1 .piece-silhouette{border-radius:50%}.slot-2 .piece-silhouette{border-radius:28%}
+.piece-slot.is-near .piece-silhouette{color:var(--signal);background:color-mix(in srgb,var(--signal) 12%,transparent);outline-style:solid;box-shadow:0 0 30px color-mix(in srgb,var(--signal) 18%,transparent)}
+.slot-0.is-near .piece-silhouette{background:none;box-shadow:none;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--signal) 50%,transparent))}
+.piece-slot-label{font-size:19px;font-weight:500;letter-spacing:-.5px}.piece-slot-label>span{margin-left:15px;font-size:17px}.piece-slot-label small{display:block;font-size:11px;font-weight:400;letter-spacing:0;margin-top:7px}
+.piece-snapping .piece-slot-label{opacity:.4;transition:opacity .25s}
+@media(max-width:600px){.piece-field .toy::before{inset:-24px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}}
+@media(prefers-reduced-motion:reduce){.piece-field .toy::before{transition:none}}
+@keyframes socket-reveal{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
+@media(max-width:600px){.piece-destination{min-height:78px}.piece-silhouette{width:65px;height:65px;font-size:48px}.slot-0 .piece-silhouette{font-size:62px}.piece-slot{gap:18px;padding:0 8px;min-height:78px}.piece-slot-label{font-size:17px}.piece-slot-label small{font-size:10px}.piece-field.navigation-field{min-height:235px!important;max-height:290px!important}.hero-bottom>div{gap:7px}.hero-bottom>div>span{max-width:240px}}
+@media(max-height:650px) and (min-width:700px){.piece-silhouette{width:55px;height:55px;font-size:42px}.slot-0 .piece-silhouette{font-size:50px}.piece-destination,.piece-slot{min-height:60px}.piece-slot-label{font-size:16px}.piece-slot-label small{font-size:10px}}
+.profile-play{position:relative}.profile-play-hint{position:absolute;bottom:-28px;font-size:11px;color:var(--ink);opacity:.8;animation:socket-reveal .5s ease-out}
+.polished-letter .contact-draft{animation-delay:.16s;animation-fill-mode:backwards}
+.piece-field{--drift-x:24px;--drift-y:32px}
+.piece-field .toy{animation:piece-wander 9s ease-in-out infinite}
+.piece-field .toy-1{animation-duration:11s;animation-delay:-4s}
+.piece-field .toy-2{animation-duration:10s;animation-delay:-7s}
+.piece-field .toy .toy-object{animation:none}
+.piece-field .toy.selected,.piece-field .toy:hover,.piece-field .toy:focus-visible,[aria-hidden=true] .piece-field .toy{animation-play-state:paused}
+@keyframes piece-wander{0%,100%{translate:calc(var(--drift-x) * -.6) 0}30%{translate:var(--drift-x) calc(var(--drift-y) * .65)}65%{translate:calc(var(--drift-x) * -.9) var(--drift-y)}}
+.piece-destination.roaming-destination{inset:auto;min-height:0;width:max-content;max-width:calc(100% - 16px);justify-content:start}
+.roaming-destination .piece-slot{min-height:0;padding:6px;gap:12px}
+.roaming-destination .piece-slot-label{font-size:16px;white-space:nowrap}
+.roaming-destination .piece-slot-label>span{margin-left:3px}
+@media(max-width:600px){.piece-field{--drift-x:12px;--drift-y:14px;--caption-space:30px}.roaming-destination .piece-slot{flex-direction:column;gap:8px;padding:6px}.roaming-destination .piece-slot-label{font-size:12px}.roaming-destination .piece-silhouette{width:52px;height:52px;font-size:40px}.roaming-destination .slot-0 .piece-silhouette{font-size:50px}}
+@media(max-width:600px) and (max-height:700px){.piece-field{--drift-y:10px;--caption-space:24px}.roaming-destination .piece-slot{flex-direction:row}.roaming-destination .piece-silhouette{width:40px;height:40px;font-size:30px}.roaming-destination .slot-0 .piece-silhouette{font-size:38px}}
+@media(prefers-reduced-motion:reduce){.piece-field .toy{animation:none;translate:none}}

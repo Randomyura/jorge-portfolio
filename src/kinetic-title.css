@@ -1,0 +1,36 @@
+.kinetic-title{font-family:'Syne',Arial,sans-serif;font-weight:800;letter-spacing:-.075em;line-height:.88;margin:0;pointer-events:auto;perspective:800px;position:relative;z-index:2;color:var(--ink)}
+.kinetic-title .kinetic-line{display:block;transform:translate(var(--title-x,0px),var(--title-y,0px));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.kinetic-title .kinetic-accent{font-family:'Instrument Serif',Georgia,serif;font-size:1.08em;font-style:italic;font-weight:400;color:var(--signal);letter-spacing:-.04em;line-height:.92;margin-left:13%;white-space:nowrap}
+.kinetic-word{display:inline-block;white-space:nowrap}.kinetic-space{white-space:pre}.glyph-reveal{display:inline-block;transform-origin:50% 100%;perspective:500px}.kinetic-glyph{display:inline-block;transform-origin:50% 70%;will-change:auto;transition:color .3s}
+.kinetic-title:hover .kinetic-line:not(.kinetic-accent){color:var(--signal)}
+.fixed-screens .kinetic-home{font-size:clamp(65px,min(11.5vw,18vh),190px);line-height:.82;width:90%;margin-top:14px}
+.kinetic-home .kinetic-accent{margin-left:33%;font-size:1.35em;line-height:.85}
+.kinetic-home .kinetic-glyph{animation:type-tide 7s ease-in-out infinite;animation-delay:calc(var(--i)*-.19s)}
+.kinetic-home .kinetic-accent .kinetic-glyph{animation-name:type-sway;animation-duration:8s}
+.gallery-title .kinetic-title{font-size:clamp(60px,min(9vw,16vh),150px)}
+.kinetic-work .kinetic-glyph{animation:type-breathe 8s ease-in-out infinite;animation-delay:calc(var(--i)*-.28s)}
+.kinetic-work .kinetic-accent .kinetic-glyph{animation-name:type-tide;animation-duration:9s}
+.kinetic-about .kinetic-glyph{animation:type-depth 9s ease-in-out infinite;animation-delay:calc(var(--i)*-.32s)}
+.kinetic-about .kinetic-accent .kinetic-glyph{animation-name:type-sway;animation-duration:10s}
+.kinetic-contact .kinetic-glyph{animation:type-unfold 10s ease-in-out infinite;animation-delay:calc(var(--i)*-.23s)}
+.kinetic-contact .kinetic-accent .kinetic-glyph{animation-name:type-tide;animation-duration:8s}
+@keyframes type-tide{0%,100%{transform:translateY(0)}50%{transform:translateY(-.035em)}}
+@keyframes type-sway{0%,100%{transform:rotate(0)}50%{transform:rotate(-2deg) translateY(.02em)}}
+@keyframes type-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.96) translateY(.015em)}}
+@keyframes type-depth{0%,100%{transform:translateZ(0) rotateY(0)}50%{transform:translateZ(8px) rotateY(-5deg)}}
+@keyframes type-unfold{0%,100%{transform:rotateX(0)}50%{transform:rotateX(10deg) translateY(-.025em)}}
+@media(max-width:800px){.gallery-title .kinetic-title{font-size:clamp(48px,12vw,75px)}}
+@media(max-width:600px){.fixed-screens .kinetic-home{font-size:15vw;width:100%;margin-top:20px}.kinetic-home .kinetic-accent{margin-left:17%;font-size:1.35em}.gallery-title .kinetic-title{font-size:14vw}.letter-screen .gallery-title .kinetic-title{font-size:13vw}.kinetic-title .kinetic-accent{margin-left:14%}}
+@media(max-height:650px) and (min-width:700px){.fixed-screens .kinetic-home{font-size:15vh}}
+@media(prefers-reduced-motion:reduce){.kinetic-title .kinetic-line{transform:none!important}.kinetic-glyph{animation:none!important;transform:none!important}}
+.kinetic-title.title-resting .kinetic-glyph{animation-play-state:paused}
+/* Sliced echoes sit over the existing glyph motion without replacing its transform. */
+.kinetic-glyph{position:relative}
+.kinetic-glyph::before,.kinetic-glyph::after{content:attr(data-letter);position:absolute;inset:0;pointer-events:none;opacity:0;line-height:inherit;color:var(--signal)}
+.kinetic-glyph::after{color:var(--ink)}
+.title-glitch .kinetic-glyph::before{animation:glyph-glitch-top .6s steps(1,end) both;animation-delay:calc(var(--i)*.004s)}
+.title-glitch .kinetic-glyph::after{animation:glyph-glitch-bottom .6s steps(1,end) both;animation-delay:calc(var(--i)*.004s)}
+@keyframes glyph-glitch-top{0%,18%,40%,74%,100%{opacity:0;transform:none;clip-path:inset(20% 0 62%)}8%,28%{opacity:.9;transform:translate(.045em,-.012em);clip-path:inset(20% -20% 62% -20%)}54%,63%{opacity:.8;transform:translate(-.035em,.01em);clip-path:inset(42% -20% 43% -20%)}}
+@keyframes glyph-glitch-bottom{0%,22%,46%,80%,100%{opacity:0;transform:none;clip-path:inset(65% 0 18%)}12%,33%{opacity:.85;transform:translate(-.045em,.012em);clip-path:inset(65% -20% 18% -20%)}57%,68%{opacity:.75;transform:translate(.035em,-.01em);clip-path:inset(48% -20% 35% -20%)}}
+@media(prefers-reduced-motion:reduce){.kinetic-glyph::before,.kinetic-glyph::after{display:none!important;animation:none!important}}
+@media(hover:hover) and (pointer:fine){.kinetic-title.title-resting:hover .kinetic-glyph{animation-play-state:running}}
