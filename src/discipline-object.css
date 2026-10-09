@@ -33,6 +33,7 @@
 .face-front{transform:translateZ(.29em)}.face-back{transform:rotateY(180deg) translateZ(.29em)}.face-left{transform:rotateY(-90deg) translateZ(.29em)}.face-right{transform:rotateY(90deg) translateZ(.29em)}.face-top{transform:rotateX(90deg) translateZ(.29em)}.face-bottom{transform:rotateX(-90deg) translateZ(.29em)}
 .spatial-core{position:absolute;inset:0;display:grid;place-items:center;font-size:.36em;color:var(--signal);line-height:1;transform:translateZ(0);text-shadow:3px 4px 0 #23449e}
 .discipline-1 .object-float{animation-delay:-2s}.discipline-2 .object-float{animation-delay:-4s}.discipline-3 .object-float{animation-delay:-6s}
+.web-cursor .piece-icon{transform:rotate(-90deg);filter:drop-shadow(3px 3px 0 #122864)}
 @keyframes discipline-float{0%,100%{transform:translate3d(-5px,0,0) rotateZ(-2deg)}50%{transform:translate3d(7px,-14px,8px) rotateZ(2deg)}}
 @keyframes discipline-shadow{0%,100%{opacity:.55;scale:1}50%{opacity:.3;scale:.82}}
 @keyframes web-cursor-drift{0%,100%{translate:0 0}50%{translate:-8px -5px}}

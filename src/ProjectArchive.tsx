@@ -4,15 +4,15 @@ import {KineticTitle} from './KineticTitle';
 import {Experiment} from './Experiments';
 import './project-archive.css';
 import {DisciplineObject} from './DisciplineObject';
+import {PieceIcon} from './PieceIcon';
 
 type Lang='es'|'en';
 type Project={id:number;discipline:number;featured:boolean};
 // Layout samples only. Replace these slots with Jorge's actual work and media.
 const projects:Project[]=Array.from({length:24},(_,i)=>({id:i+1,discipline:i%4,featured:i<6}));
-const symbols=['✳','↗','◒','◇'];
 const pad=(n:number)=>String(n).padStart(2,'0');
 function Artwork({project,mini=false}:{project:Project;mini?:boolean}){
- return <div className={`archive-art art-${project.discipline} ${mini?'art-mini':''}`} aria-hidden="true">{mini?<><span className="art-mark">{symbols[project.discipline]}</span><span className="art-number">{pad(project.id)}</span></>:<DisciplineObject discipline={project.discipline}/>}</div>;
+ return <div className={`archive-art art-${project.discipline} ${mini?'art-mini':''}`} aria-hidden="true">{mini?<><span className="art-mark"><PieceIcon index={project.discipline}/></span><span className="art-number">{pad(project.id)}</span></>:<DisciplineObject discipline={project.discipline}/>}</div>;
 }
 export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
  const es=lang==='es',labels=es?['Gráfico','Web','App','3D']:['Graphic','Web','App','3D'];

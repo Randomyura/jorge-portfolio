@@ -1,3 +1,4 @@
+import {PieceIcon} from './PieceIcon';
 import React, {useEffect,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import gsap from 'gsap';
@@ -80,7 +81,7 @@ function App(){
  <div className="navigation-transition spatial-transition" ref={transition} aria-hidden="true"><div className="transition-orb"/><div className="transition-turn"/><div className="transition-fold transition-fold-top"/><div className="transition-fold transition-fold-bottom"/></div>
  <a className="skip" href="#main">{lang==='es'?'Saltar al contenido':'Skip to content'}</a>
  <header><a className="signature" href="#home">Jorge Sunyer Guirado<span>Creative Developer</span></a><Navigation lang={lang} labels={[t.work,t.about,t.hello]} screen={activeScreen}/><HeaderControls lang={lang} dark={dark} onTheme={()=>setDark(!dark)} onLanguage={changeLanguage}/></header>
- <main id="main"><section className="hero" id="home"><LivingField/><div className="hero-stamp" aria-hidden="true"><span>INDEPENDENT</span><b>↗</b><span>DESIGN PLAYGROUND</span></div><div className="hero-kicker"><span>DESIGN + CODE + A LITTLE CHAOS</span><span>PORTFOLIO / 2026</span></div><KineticTitle first={t.title} second={t.second} variant="home" level={1}/><PieceNavigation lang={lang} labels={[t.work,t.about,t.hello]} intro={t.intro} hint={t.hint} isActive={activeScreen==='home'} onNavigate={navigate}/></section>
+ <main id="main"><section className="hero" id="home"><LivingField/><div className="hero-stamp" aria-hidden="true"><span>INDEPENDENT</span><b><PieceIcon index={1}/></b><span>DESIGN PLAYGROUND</span></div><div className="hero-kicker"><span>DESIGN + CODE + A LITTLE CHAOS</span><span>PORTFOLIO / 2026</span></div><KineticTitle first={t.title} second={t.second} variant="home" level={1}/><PieceNavigation lang={lang} labels={[t.work,t.about,t.hello]} intro={t.intro} hint={t.hint} isActive={activeScreen==='home'} onNavigate={navigate}/></section>
  <section className="work archive-screen" id="work"><LivingField variant="work"/><ProjectArchive lang={lang} isActive={activeScreen==='work'}/></section>
  <section className="about perspective-screen" id="about"><LivingField variant="about"/><div className="gallery-title"><KineticTitle first={lang==='es'?'Cruzar':'Fresh'} second={lang==='es'?'miradas.':'perspectives.'} variant="about"/></div><ProfilePlay lang={lang}/></section>
  <section className="contact letter-screen" id="contact"><LivingField variant="contact"/><div className="gallery-title"><KineticTitle first={lang==='es'?'Lo que':'What comes'} second={lang==='es'?'viene.':'next.'} variant="contact"/><p className="letter-intro">{lang==='es'?'Empieza con una idea.':'It starts with an idea.'}</p></div><ContactPlay lang={lang}/></section></main>
