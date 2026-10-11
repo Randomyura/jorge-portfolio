@@ -1,0 +1,10 @@
+import './flyer.css';
+export const flyerImage=`${import.meta.env.BASE_URL}projects/flyer/poster.webp`;
+export function FlyerStory({lang}:{lang:'es'|'en'}){
+ const es=lang==='es';
+ return <>
+  <div className="project-page-heading project-reveal"><span className="project-kicker">003 / {es?'Diseño gráfico · Flyer':'Graphic design · Flyer'}</span><h2>The Ultimate Party<span>STARGY</span></h2></div>
+  <div className="flyer-layout project-reveal"><figure className="flyer-poster"><a href={flyerImage} target="_blank" rel="noreferrer" aria-label={es?'Ampliar el flyer':'Enlarge the flyer'}><img src={flyerImage} alt={es?'Flyer The Ultimate Party de STARGY: público en un concierto, luces cálidas y título rosa sobre negro':'STARGY The Ultimate Party flyer: concert crowd, warm lights and pink title on black'} width="1132" height="1600"/></a></figure><div className="flyer-copy"><span className="project-kicker">{es?'El diseño':'The design'}</span><h3>{es?'Música, luz y energía.':'Music, light and energy.'}</h3><p>{es?'Propuesta de flyer para un evento musical de STARGY. La fotografía de concierto, los tonos cálidos y la tipografía rosa construyen una composición de ambiente nocturno.':'A STARGY music event flyer concept. Concert photography, warm tones and pink typography create a composition with a nightlife atmosphere.'}</p><p className="flyer-credit">Jorge Sunyer Guirado</p></div></div>
+  <section className="flyer-mockups" aria-label={es?'Mockups del cartel':'Poster mockups'}><h3>{es?'El cartel en contexto.':'The poster in context.'}</h3><div>{[2,3,4].map((n,i)=>{const url=`${import.meta.env.BASE_URL}projects/flyer/mockup${n}.webp`;const labels=es?['Vista frontal','Vista en perspectiva','Composición de dos carteles']:['Front view','Perspective view','Two-poster composition'];return <figure key={n}><a href={url} target="_blank" rel="noreferrer" aria-label={`${es?'Ampliar':'Enlarge'} · ${labels[i]}`}><img src={url} alt={`${es?'Mockup del cartel STARGY':'STARGY poster mockup'} · ${labels[i]}`} loading="lazy" width="2000" height="1500"/></a><figcaption>{labels[i]} <span>↗</span></figcaption></figure>;})}</div></section>
+ </>;
+}

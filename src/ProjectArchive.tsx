@@ -1,100 +1,83 @@
 import {useEffect,useRef,useState} from 'react';
 import gsap from 'gsap';
+import {SprinterStory,sprinterImage} from './SprinterStory';
+import {App156Story,app156Image} from './App156Story';
+import {SelectedStory,selectedProjects,selectedImage} from './SelectedStory';
+import {BufaloStory,bufaloImage} from './BufaloStory';
+import {DesignStory,designImage} from './DesignStory';
+import {FlyerStory,flyerImage} from './FlyerStory';
+import {StargyStory,stargyCover} from './StargyStory';
 import {KineticTitle} from './KineticTitle';
-import {Experiment} from './Experiments';
+import {HermesStory,hermesImage} from './HermesStory';
+import {InlineIcon} from './PieceIcon';
 import './project-archive.css';
-import {DisciplineObject} from './DisciplineObject';
-import {PieceIcon,InlineIcon} from './PieceIcon';
+import './hermes.css';
 
 type Lang='es'|'en';
-type Project={id:number;discipline:number;featured:boolean};
-// Layout samples only. Replace these slots with Jorge's actual work and media.
-const projects:Project[]=Array.from({length:24},(_,i)=>({id:i+1,discipline:i%4,featured:i<6}));
-const pad=(n:number)=>String(n).padStart(2,'0');
-function Artwork({project,mini=false}:{project:Project;mini?:boolean}){
- return <div className={`archive-art art-${project.discipline} ${mini?'art-mini':''}`} aria-hidden="true">{mini?<><span className="art-mark"><PieceIcon index={project.discipline}/></span><span className="art-number">{pad(project.id)}</span></>:<DisciplineObject discipline={project.discipline}/>}</div>;
-}
+type Category='all'|'design'|'app'|'web'|'3d';
+const projectRoute=()=>location.hash==='#work/sprinter'?'sprinter':location.hash==='#work/app156'?'app156':location.hash==='#work/hermes'?'hermes':location.hash==='#work/stargy'?'stargy':location.hash==='#work/flyer'?'flyer':location.hash==='#work/design'?'design':location.hash==='#work/bufalo'?'bufalo':selectedProjects.find(p=>location.hash===`#work/${p.id}`)?.id??null;
 export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
- const es=lang==='es',labels=es?['Gráfico','Web','App','3D']:['Graphic','Web','App','3D'];
- const [filter,setFilter]=useState(-1),[all,setAll]=useState(false),[cursor,setCursor]=useState(0);
- const [panel,setPanel]=useState<'index'|'detail'|'lab'|null>(null),[query,setQuery]=useState(''),[lab,setLab]=useState(0);
- const [controlsOpen,setControlsOpen]=useState(false);
- const controlsRoot=useRef<HTMLDivElement>(null),controlsTrigger=useRef<HTMLButtonElement>(null);
- const dialog=useRef<HTMLDialogElement>(null),returnTo=useRef<HTMLElement|null>(null),stage=useRef<HTMLDivElement>(null);
- const gesture=useRef<{x:number;y:number;pointer:number}|null>(null);
- const suppressClick=useRef(false);
- const travel=useRef(1);
- const detailMotion=useRef<gsap.core.Timeline|null>(null),closing=useRef(false);
- const sourceRect=useRef<DOMRect|null>(null);
- const pool=projects.filter(p=>(all||p.featured)&&(filter===-1||p.discipline===filter));
- const project=pool[cursor%pool.length],index=cursor%pool.length;
- const name=(p:Project)=>`${es?'Proyecto':'Project'} ${pad(p.id)}`;
- const selectFilter=(n:number)=>{setFilter(n);setCursor(0);};
- const step=(direction:number)=>{travel.current=direction;setCursor((index+direction+pool.length)%pool.length);};
- const open=(next:'index'|'detail'|'lab',trigger:HTMLElement)=>{returnTo.current=controlsRoot.current?.contains(trigger)?controlsTrigger.current:trigger;setControlsOpen(false);sourceRect.current=stage.current?.querySelector('.archive-art')?.getBoundingClientRect()??null;setPanel(next);};
+ const es=lang==='es';
+ const [detail,setDetail]=useState(projectRoute);
+ const [category,setCategory]=useState<Category>('all');
+ const categories:{id:Category;label:string;count:number}[]=[{id:'all',label:es?'Todo':'All',count:13},{id:'design',label:es?'Diseño':'Design',count:10},{id:'app',label:'App',count:1},{id:'web',label:'Web',count:1},{id:'3d',label:'3D',count:1}];
+ const shows=(group:Category)=>category==='all'||category===group;
+ const root=useRef<HTMLDivElement>(null),card=useRef<HTMLAnchorElement>(null);
+ const returnProject=useRef('hermes');
+ const openedHere=useRef(false),restoreFocus=useRef(false);
  useEffect(()=>{
-  if(!controlsOpen)return;
-  const outside=(e:PointerEvent)=>{if(!controlsRoot.current?.contains(e.target as Node))setControlsOpen(false);};
-  const escape=(e:KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();setControlsOpen(false);controlsTrigger.current?.focus();}};
-  document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);
-  return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
- },[controlsOpen]);
- const finishClose=()=>{closing.current=false;setPanel(null);};
- const close=()=>{
-  if(closing.current)return;
-  detailMotion.current?.kill();
-  const art=dialog.current?.querySelector('.archive-detail-layout>.archive-art'),source=stage.current?.querySelector('.archive-art');
-  if(panel!=='detail'||!art||!source||matchMedia('(prefers-reduced-motion: reduce)').matches){finishClose();return;}
-  closing.current=true;
-  const a=art.getBoundingClientRect(),b=source.getBoundingClientRect();
-  detailMotion.current=gsap.timeline({onComplete:finishClose}).to(dialog.current!.querySelectorAll('.archive-dialog-header,.archive-detail-copy'),{opacity:0,y:8,duration:.18}).to(art,{x:b.left+b.width/2-a.left-a.width/2,y:b.top+b.height/2-a.top-a.height/2,scale:Math.min(b.width/a.width,b.height/a.height),opacity:0,duration:.38,ease:'power3.inOut'},0);
- };
+  const sync=()=>{const next=projectRoute();if(!next&&restoreFocus.current){requestAnimationFrame(()=>root.current?.querySelector<HTMLAnchorElement>(`a[href="#work/${returnProject.current}"]`)?.focus({preventScroll:true}));restoreFocus.current=false;}setDetail(next);};
+  window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);
+ },[]);
  useEffect(()=>{
-  const el=dialog.current!;
-  if(!panel){el.close();returnTo.current?.focus({preventScroll:true});return;}
-  el.showModal();closing.current=false;
-  if(panel!=='detail'||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const art=el.querySelector('.archive-detail-layout>.archive-art')!,target=art.getBoundingClientRect(),source=sourceRect.current;
-  const ctx=gsap.context(()=>{
-   detailMotion.current=gsap.timeline().fromTo(art,{x:source?source.left+source.width/2-target.left-target.width/2:0,y:source?source.top+source.height/2-target.top-target.height/2:30,scale:source?Math.min(source.width/target.width,source.height/target.height):.7,opacity:.35},{x:0,y:0,scale:1,opacity:1,duration:.65,ease:'power3.inOut',clearProps:'transform,opacity'}).fromTo('.archive-dialog-header,.archive-detail-copy',{opacity:0,y:18},{opacity:1,y:0,duration:.4,stagger:.06,clearProps:'opacity,transform'},.25);
-  },el);
-  return()=>{detailMotion.current?.kill();ctx.revert();};
- },[panel]);
- useEffect(()=>{if(!isActive){setPanel(null);setControlsOpen(false);}},[isActive]);
- useEffect(()=>{
-  if(!isActive||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const ctx=gsap.context(()=>{
-   gsap.fromTo('.archive-front',{opacity:.25,x:55*travel.current,rotation:8*travel.current,scale:.82},{opacity:1,x:0,rotation:0,scale:1,duration:.65,ease:'power3.out'});
-   gsap.fromTo('.archive-current-copy',{y:14,opacity:0},{y:0,opacity:1,duration:.45,delay:.1,clearProps:'all'});
-  },stage);
+  if(!isActive)return;
+  root.current?.closest('section')?.scrollTo(0,0);
+  if(detail){root.current?.querySelector<HTMLElement>('.project-return')?.focus({preventScroll:true});}
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const ctx=gsap.context(()=>{gsap.fromTo('.project-reveal',{y:22,opacity:0},{y:0,opacity:1,duration:.65,stagger:.08,ease:'power3.out',clearProps:'all'});},root);
   return()=>ctx.revert();
- },[project.id,isActive]);
- const visible=projects.filter(p=>(filter===-1||p.discipline===filter)&&(`${name(p)} ${labels[p.discipline]}`).toLowerCase().includes(query.toLowerCase()));
- return <>
-  <div className="archive-heading"><KineticTitle first={es?'En':'In'} second={es?'juego.':'play.'} variant="work"/><div className="archive-browser" ref={controlsRoot}>
-   <button ref={controlsTrigger} className="archive-browser-trigger" aria-expanded={controlsOpen} aria-controls="project-controls" onClick={()=>setControlsOpen(!controlsOpen)}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 17h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="9" cy="7" r="3" fill="var(--bg)" stroke="currentColor" strokeWidth="1.5"/><circle cx="15" cy="17" r="3" fill="var(--bg)" stroke="currentColor" strokeWidth="1.5"/></svg>{es?'Explorar':'Explore'}<span className="archive-browser-chevron"><InlineIcon kind="down"/></span></button>
-   <div className="archive-browser-panel" id="project-controls" hidden={!controlsOpen}>
-    <div className="archive-browser-filters" role="group" aria-label={es?'Filtrar proyectos':'Filter projects'}>{[es?'Todo':'All',...labels].map((label,i)=><button key={label} aria-pressed={filter===i-1} onClick={()=>{selectFilter(i-1);setControlsOpen(false);controlsTrigger.current?.focus();}}>{label}{filter===i-1&&<InlineIcon kind="check"/>}</button>)}</div>
-    <div className="archive-browser-scope" role="group" aria-label={es?'Selección de proyectos':'Project selection'}>{[false,true].map(scope=><button key={String(scope)} aria-pressed={all===scope} onClick={()=>{setAll(scope);setCursor(0);setControlsOpen(false);controlsTrigger.current?.focus();}}>{scope?(es?'Todos':'All'):(es?'Destacados':'Featured')}</button>)}</div>
-    <button className="archive-browser-action" onClick={e=>open('index',e.currentTarget)}>{es?'Abrir archivo':'Open archive'}<span>24 <InlineIcon kind="arrow"/></span></button>
-    <button className="archive-browser-action" onClick={e=>open('lab',e.currentTarget)}>{es?'Laboratorio':'Laboratory'}<PieceIcon index={0}/></button>
+ },[isActive,detail]);
+ const back=()=>{restoreFocus.current=true;if(openedHere.current){openedHere.current=false;history.back();}else{location.hash='work';}};
+ return <div className={`project-collection ${detail?'project-page':'project-list'} ${detail==='stargy'?'stargy-page':detail==='design'?'design-page':''}`} ref={root}>
+  {detail?<>
+   <div className="project-page-nav project-reveal"><button className="project-return" onClick={back}><InlineIcon kind="back"/>{es?'Todos los proyectos':'All projects'}</button><span>{detail==='stargy'?'002':detail==='flyer'?'003':detail==='design'?'004':detail==='bufalo'?'005':detail==='app156'?'012':detail==='sprinter'?'013':selectedProjects.find(p=>p.id===detail)?.number??'001'} / {detail==='bufalo'?'3D':detail==='app156'?'App':detail==='sprinter'?'Web':es?'Diseño':'Design'}</span></div>
+   {detail==='sprinter'?<SprinterStory lang={lang}/>:detail==='app156'?<App156Story lang={lang}/>:detail==='stargy'?<StargyStory lang={lang}/>:detail==='flyer'?<FlyerStory lang={lang}/>:detail==='design'?<DesignStory lang={lang}/>:detail==='bufalo'?<BufaloStory lang={lang}/>:selectedProjects.some(p=>p.id===detail)?<SelectedStory id={detail} lang={lang}/>:<>
+   <div className="project-page-heading project-reveal"><span className="project-kicker">{es?'Concepto académico · Adobe Illustrator':'Academic concept · Adobe Illustrator'}</span><h2>Hermès<span>Packaging Concept</span></h2></div>
+   <figure className="project-hero project-reveal"><img src={hermesImage(17)} alt={es?'Propuesta de envase cosmético Hermès, caja y tapa sobre fondo blanco':'Hermès cosmetic packaging concept, box and lid on a white background'} width="1200" height="1200"/><figcaption>{es?'Envase, caja y representaciones 3D realizados en Illustrator.':'Container, box and 3D representations created in Illustrator.'}</figcaption></figure>
+   <div className="project-story project-reveal"><HermesStory lang={lang}/></div>
+   </>}
+   <div className="project-page-end"><button className="project-return" onClick={back}><InlineIcon kind="back"/>{es?'Volver a proyectos':'Back to projects'}</button></div>
+  </>:<>
+   <div className="project-list-heading project-reveal"><KineticTitle first={es?'En':'In'} second={es?'juego.':'play.'} variant="work"/><span className="project-kicker">{es?'Selección de proyectos':'Selected work'} / 13</span></div>
+   <div className="project-category-filters" role="group" aria-label={es?'Categorías de proyectos':'Project categories'}>{categories.map(c=><button key={c.id} aria-pressed={category===c.id} onClick={()=>setCategory(c.id)}>{c.label}<span>{c.count}</span></button>)}</div>
+   {false&&<p className="project-empty" role="status">{es?'Todavía no hay proyectos publicados en esta categoría.':'There are no projects in this category yet.'}</p>}
+   <div className="project-grid">
+   {shows('web')&&<a className="project-card project-reveal sprinter-card" href="#work/sprinter" onClick={()=>{openedHere.current=true;returnProject.current='sprinter';}}><div className="project-card-media"><img src={sprinterImage('home')} alt={es?'Sprinter · propuesta de rediseño web':'Sprinter · website redesign concept'} style={{objectPosition:'top'}}/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div><div className="project-card-caption"><div><span className="project-kicker">013 / Web · Figma</span><h3>Sprinter <span>— {es?'Rediseño web':'Website redesign'}</span></h3></div><span className="project-card-arrow"><InlineIcon kind="arrow"/></span></div></a>}
+
+    {shows('app')&&<a className="project-card project-reveal" href="#work/app156" onClick={()=>{openedHere.current=true;returnProject.current='app156';}}><div className="project-card-media"><img src={app156Image} alt={es?'App 156 · presentación del diseño en Figma':'App 156 · Figma design presentation'} width="1600" height="900"/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div><div className="project-card-caption"><div><span className="project-kicker">012 / App · Figma</span><h3>App 156 <span>— {es?'Donación de sangre':'Blood donation'}</span></h3></div><span className="project-card-arrow"><InlineIcon kind="arrow"/></span></div></a>}
+
+    {shows('design')&&<>    <a className="project-card project-reveal" ref={card} href="#work/hermes" onClick={e=>{if(e.button===0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){openedHere.current=true;returnProject.current='hermes';}}}>
+     <div className="project-card-media"><img src={hermesImage(17)} alt={es?'Envase, caja y tapa del concepto Hermès sobre fondo blanco':'Hermès packaging concept with container, box and lid on white'} width="1200" height="1200"/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div>
+     <div className="project-card-caption"><div><span className="project-kicker">001 / Graphic Design · Packaging</span><h3>Hermès <span>— Packaging Concept</span></h3></div><span className="project-card-arrow" aria-hidden="true"><InlineIcon kind="arrow"/></span></div>
+    </a></>}
+    {shows('design')&&<>    <a className="project-card project-reveal" href="#work/stargy" onClick={e=>{if(e.button===0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){openedHere.current=true;returnProject.current='stargy';}}}>
+     <div className="project-card-media"><img src={stargyCover} alt={es?'STARGY · lata roja con símbolo de flor de loto blanco':'STARGY · red can with a white lotus flower symbol'} width="1500" height="1000"/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div>
+     <div className="project-card-caption"><div><span className="project-kicker">002 / {es?'Identidad visual':'Visual identity'}</span><h3>STARGY <span>— {es?'Manual de identidad':'Identity manual'}</span></h3></div><span className="project-card-arrow" aria-hidden="true"><InlineIcon kind="arrow"/></span></div>
+    </a></>}
+    {shows('design')&&<>    <a className="project-card project-reveal" href="#work/flyer" onClick={e=>{if(e.button===0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){openedHere.current=true;returnProject.current='flyer';}}}>
+     <div className="project-card-media flyer-card-media"><img src={flyerImage} alt={es?'Flyer STARGY · The Ultimate Party, fotografía de concierto y tipografía rosa':'STARGY flyer · The Ultimate Party, concert photograph and pink typography'} width="1132" height="1600"/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div>
+     <div className="project-card-caption"><div><span className="project-kicker">003 / {es?'Diseño gráfico · Flyer':'Graphic design · Flyer'}</span><h3>The Ultimate Party <span>— STARGY</span></h3></div><span className="project-card-arrow" aria-hidden="true"><InlineIcon kind="arrow"/></span></div>
+    </a></>}
+    {shows('design')&&<>    <a className="project-card project-reveal" href="#work/design" onClick={e=>{if(e.button===0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){openedHere.current=true;returnProject.current='design';}}}>
+     <div className="project-card-media"><img src={designImage(1)} alt={es?'Identidad DESIGN con silueta de Barcelona y marcador de ubicación':'DESIGN identity with Barcelona skyline and a location pin'} width="1400" height="990"/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div>
+     <div className="project-card-caption"><div><span className="project-kicker">004 / {es?'Identidad de app':'App identity'}</span><h3>DESIGN <span>— {es?'Barcelona e identidad':'Barcelona and identity'}</span></h3></div><span className="project-card-arrow" aria-hidden="true"><InlineIcon kind="arrow"/></span></div>
+    </a></>}
+    {shows('3d')&&<>    <a className="project-card project-reveal" href="#work/bufalo" onClick={e=>{if(e.button===0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){openedHere.current=true;returnProject.current='bufalo';}}}>
+     <div className="project-card-media"><img src={bufaloImage(10)} alt={es?'BÚFALO · caja envuelta en perspectiva':'BÚFALO · wrapped packaging in perspective'} width="1000" height="1000"/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div>
+     <div className="project-card-caption"><div><span className="project-kicker">005 / 3D · Packaging</span><h3>BÚFALO <span>— Packaging Concept</span></h3></div><span className="project-card-arrow" aria-hidden="true"><InlineIcon kind="arrow"/></span></div>
+    </a></>}
+    {(shows('design')?selectedProjects:[]).map(p=><a key={p.id} className="project-card project-reveal" href={`#work/${p.id}`} onClick={()=>{openedHere.current=true;returnProject.current=p.id;}}><div className="project-card-media"><img src={selectedImage(p.id,p.id==='sherlock'?1:0)} alt={p.title}/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div><div className="project-card-caption"><div><span className="project-kicker">{p.number} / {es?p.categoryEs:p.categoryEn}</span><h3>{p.title}</h3></div><span className="project-card-arrow"><InlineIcon kind="arrow"/></span></div></a>)}
    </div>
-  </div></div>
-  <div className="archive-stage" ref={stage} role="group" tabIndex={0} aria-label={es?'Explorador de proyectos. Usa las flechas izquierda y derecha.':'Project explorer. Use left and right arrows.'}
-   onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();step(e.key==='ArrowRight'?1:-1);}}}
-   onPointerDown={e=>{if((e.target as Element).closest('.archive-current-copy button')||e.button!==0)return;suppressClick.current=false;gesture.current={x:e.clientX,y:e.clientY,pointer:e.pointerId};}}
-   onPointerMove={e=>{const g=gesture.current;if(!g||g.pointer!==e.pointerId)return;if(Math.abs(e.clientX-g.x)>8&&Math.abs(e.clientX-g.x)>Math.abs(e.clientY-g.y)){suppressClick.current=true;e.currentTarget.setPointerCapture(e.pointerId);}}}
-   onPointerUp={e=>{const g=gesture.current;gesture.current=null;if(!g||g.pointer!==e.pointerId)return;const dx=e.clientX-g.x,dy=e.clientY-g.y;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy))step(dx<0?1:-1);}}
-   onPointerCancel={()=>{gesture.current=null;}}>
-   <button className="archive-front" onClick={e=>{if(e.detail===0||!suppressClick.current)open('detail',e.currentTarget);}} aria-label={`${es?'Abrir':'Open'} ${name(project)}`}><Artwork project={project}/><span className="archive-open-cue" aria-hidden="true"><InlineIcon kind="arrow"/></span></button>
-   <div className="archive-current-copy" aria-live="polite"><span>{labels[project.discipline]} <span className="archive-sample">/ {es?'Provisional':'Placeholder'}</span></span><h3>{name(project)}</h3><button onClick={e=>open('detail',e.currentTarget)}>{es?'Abrir':'Open'} <InlineIcon kind="arrow"/></button></div>
-  </div>
-  <div className="archive-bottom"><div className="archive-paging"><button onClick={()=>step(-1)} aria-label={es?'Proyecto anterior':'Previous project'}><InlineIcon kind="back"/></button><span aria-live="polite">{pad(index+1)} <span>/ {pad(pool.length)}</span></span><button onClick={()=>step(1)} aria-label={es?'Proyecto siguiente':'Next project'}><InlineIcon kind="next"/></button></div></div>
-  <dialog className={`archive-dialog archive-dialog-${panel}`} ref={dialog} aria-labelledby="archive-dialog-title" onCancel={e=>{e.preventDefault();close();}} onClick={e=>{if(e.target===e.currentTarget)close();}}>
-   <div className="archive-dialog-header"><h2 id="archive-dialog-title">{panel==='index'?(es?'El archivo.':'The archive.'):panel==='lab'?(es?'Laboratorio.':'Laboratory.'):name(project)}</h2><button onClick={close} aria-label={es?'Cerrar':'Close'}><InlineIcon kind="close"/></button></div>
-   {panel==='index'&&<><label className="archive-search">{es?'Encontrar un proyecto':'Find a project'}<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={es?'Nombre o disciplina…':'Name or discipline…'}/></label><div className="archive-index-filters" role="group" aria-label={es?'Filtrar archivo':'Filter archive'}>{[es?'Todo':'All',...labels].map((label,i)=><button key={label} aria-pressed={filter===i-1} onClick={()=>selectFilter(i-1)}>{label}<span className="archive-filter-icon"><InlineIcon kind="arrow"/></span></button>)}</div><div className="archive-index">{visible.map(p=><button key={p.id} onClick={()=>{setAll(true);setCursor(projects.filter(v=>filter===-1||v.discipline===filter).findIndex(v=>v.id===p.id));close();}}><Artwork project={p} mini/><span><strong>{name(p)}</strong><small>{labels[p.discipline]}</small></span><span aria-hidden="true"><InlineIcon kind="arrow"/></span></button>)}</div>{!visible.length&&<p>{es?'No hay resultados. Prueba otra búsqueda.':'No results. Try another search.'}</p>}<p className="archive-disclosure">{es?'24 proyectos provisionales · vista de prueba.':'24 placeholder projects · preview.'}</p></>}
-   {panel==='detail'&&<div className="archive-detail-layout"><Artwork project={project}/><div className="archive-detail-copy"><span className="archive-detail-discipline">{labels[project.discipline]}</span><p>{es?'Vista provisional. Aquí irán las imágenes y la historia del proyecto.':'Placeholder. Project images and its story will go here.'}</p><button className="archive-detail-back" onClick={close}>{es?'Volver a explorar':'Back to explore'} <InlineIcon kind="back"/></button></div></div>}
-   {panel==='lab'&&<><div className="archive-index-filters" role="group" aria-label={es?'Elegir experimento':'Choose experiment'}>{labels.map((label,i)=><button key={label} aria-pressed={lab===i} onClick={()=>setLab(i)}>{label}</button>)}</div><div className="gallery-play archive-lab"><Experiment key={lab} index={lab} lang={lang}/></div><p className="archive-disclosure">{es?'Experimentos de muestra.':'Sample experiments.'}</p></>}
-  </dialog>
- </>;
+  </>}
+ </div>;
 }

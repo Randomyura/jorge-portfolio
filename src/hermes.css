@@ -1,0 +1,9 @@
+.hermes-story{font-size:14px;line-height:1.75;display:grid;grid-template-columns:1.2fr 1fr;gap:0 64px}
+.hermes-eyebrow{grid-column:1;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal)}
+.hermes-story h3{grid-column:1;font-family:'Instrument Serif',Georgia,serif;font-size:clamp(36px,4vw,64px);font-weight:400;line-height:1.05;margin:18px 0;letter-spacing:-.03em}
+.hermes-story>p{grid-column:1;margin:18px 0}
+.hermes-facts{grid-column:2;grid-row:1/5;margin:0}.hermes-facts>div{padding:16px 0;border-top:1px solid color-mix(in srgb,var(--ink) 15%,transparent)}
+.hermes-facts dt{font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.6}.hermes-facts dd{margin:6px 0 0}
+.hermes-story .hermes-note{font-size:12px;padding-left:12px;border-left:2px solid #a99355;opacity:.7}
+.hermes-materials{grid-column:1/-1;margin-top:24px;padding-top:24px;border-top:1px solid color-mix(in srgb,var(--ink) 15%,transparent)}.hermes-materials h4{font-size:15px;margin:0}.hermes-materials p{max-width:680px;opacity:.75}
+@media(max-width:700px){.hermes-story{display:block}.hermes-facts{margin:28px 0}.hermes-materials{margin-top:28px}}

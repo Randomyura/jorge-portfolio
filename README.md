@@ -19,4 +19,4 @@ En Windows también se puede usar `ABRIR-DEMO.cmd` tras instalar las dependencia
 
 GitHub Pages se publica automáticamente al subir cambios a `main`. Consulta `PUBLICAR-GITHUB.md` para la configuración y las actualizaciones.
 
-Los proyectos son espacios provisionales a la espera de imágenes y contenidos reales. El contacto prepara un borrador en la aplicación de correo del visitante.
+El archivo incluye proyectos reales organizados en Diseño, App, Web y 3D, con fichas en español e inglés, galerías y capturas de las interfaces. El contacto prepara un borrador en la aplicación de correo del visitante.
