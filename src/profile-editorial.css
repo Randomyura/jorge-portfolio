@@ -1,0 +1,61 @@
+.fixed-screens main>section.about.perspective-screen{display:flex;flex-direction:column;justify-content:center;gap:28px;padding:30px 5% 50px;overflow-y:auto}
+.about.perspective-screen .gallery-title{align-self:stretch;margin:0}
+.about.perspective-screen .gallery-title .kinetic-title{font-size:clamp(48px,5.8vw,84px);max-width:600px}
+.profile-editorial{width:100%;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.1fr;gap:24px 7%;align-items:start}
+.profile-introduction{padding-top:28px;max-width:none}
+.profile-introduction>p{max-width:none;font-size:clamp(24px,2.7vw,34px)!important;line-height:1.35!important;letter-spacing:-.7px;margin:22px 0 0!important}
+.profile-focus{display:flex;flex-direction:column;gap:16px;min-width:0}
+.profile-editorial .profile-play{align-self:center;gap:4px}
+.profile-editorial .perspective-object{width:180px;height:150px;transform:scale(.65);margin:-15px 0}
+.profile-turn-hint{font-size:10px;opacity:.6;text-align:center}
+.profile-focus-detail{width:100%}
+.profile-area-controls{display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent);padding-bottom:14px}
+.profile-area-controls button{border:0;border-radius:999px;background:transparent;color:var(--ink);padding:10px 12px;font-size:12px;cursor:pointer;min-height:40px}
+.profile-area-controls button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.profile-area-copy{min-height:230px;padding-top:18px}
+.profile-area-copy h3{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(28px,2.6vw,38px);font-weight:400;margin:0 0 12px}
+.profile-area-copy>p{font-size:14px!important;line-height:1.6!important;max-width:none;margin:0 0 18px!important}
+.profile-area-copy .profile-tools{font-size:12px!important;margin:6px 0 16px!important}
+.profile-area-copy a,.profile-contact-link{display:inline-flex;gap:12px;align-items:center;color:var(--ink);font-size:13px;text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:5px}
+.profile-editorial-bottom{grid-column:1/-1;border-top:1px solid color-mix(in srgb,var(--ink) 18%,transparent);display:flex;justify-content:space-between;align-items:center;gap:24px;padding-top:18px}
+.profile-editorial-bottom p{font-size:12px!important;line-height:1.6!important;max-width:none;margin:0!important}
+.profile-contact-link{white-space:nowrap}
+.profile-area-controls button:focus-visible,.profile-area-copy a:focus-visible,.profile-contact-link:focus-visible{outline:3px solid var(--signal);outline-offset:5px}
+@media(max-width:750px){.fixed-screens main>section.about.perspective-screen{justify-content:flex-start;gap:24px;padding:28px 5% 60px}.about.perspective-screen .gallery-title .kinetic-title{font-size:clamp(48px,11vw,72px)}.profile-editorial{grid-template-columns:1fr;gap:24px}.profile-introduction{padding-top:0}.profile-introduction>p{font-size:24px!important;margin-top:16px!important}.profile-focus{gap:14px}.profile-editorial .profile-play{display:none}.profile-area-copy{min-height:0}.profile-editorial-bottom{align-items:flex-start}.profile-area-controls{gap:4px}.profile-area-controls button{padding:10px}}
+@media(min-width:751px) and (max-height:760px){.fixed-screens main>section.about.perspective-screen{justify-content:flex-start;gap:18px;padding-top:22px}.about.perspective-screen .gallery-title .kinetic-title{font-size:56px}.profile-editorial .profile-play{display:none}.profile-introduction{padding-top:0}}
+.profile-editorial .perspective-object{height:175px;margin:0}.profile-editorial .profile-play{gap:10px}
+/* Keep the content's natural height when the viewport is shorter. */
+.fixed-screens main>section.about.perspective-screen{justify-content:flex-start}
+.about.perspective-screen .gallery-title,.about.perspective-screen .profile-editorial{flex-shrink:0}
+.about.perspective-screen .gallery-title{padding-top:6px}
+/* Match the scale of the other screens and balance the two columns. */
+.fixed-screens main>section.about.perspective-screen{gap:32px;padding-top:30px}
+.about.perspective-screen .gallery-title .kinetic-title{font-size:clamp(64px,min(9vw,16vh),150px);max-width:800px}
+.profile-editorial{grid-template-columns:1fr 1fr;gap:28px 7%;align-items:center}
+.profile-introduction{padding-top:0;align-self:center}
+.profile-introduction>p{font-size:clamp(21px,2.15vw,29px)!important;line-height:1.45!important;max-width:510px;margin-top:18px!important}
+.profile-focus{align-items:center;gap:22px}
+.profile-editorial .profile-play{width:100%;gap:12px}
+.profile-editorial .perspective-object{width:280px;height:250px;transform:none;margin:0}
+.profile-focus-detail{width:100%;max-width:530px}
+.profile-area-controls{justify-content:center}
+.profile-area-copy{text-align:center;min-height:230px}
+.profile-area-copy>p{max-width:480px;margin-left:auto!important;margin-right:auto!important}
+.profile-area-copy h3{font-size:clamp(28px,2.8vw,40px)}
+.profile-editorial-bottom{align-self:stretch}
+@media(max-width:750px){.about.perspective-screen .gallery-title .kinetic-title{font-size:clamp(56px,14vw,90px)}.profile-editorial{grid-template-columns:1fr;gap:26px}.profile-introduction>p{font-size:21px!important;max-width:none}.profile-editorial .profile-play{display:flex}.profile-editorial .perspective-object{width:240px;height:210px;transform:scale(.85);margin:-10px 0}.profile-area-copy{min-height:0}.profile-area-controls button{padding:10px 9px}.profile-focus{gap:16px}}
+@media(min-width:751px) and (max-height:760px){.about.perspective-screen .gallery-title .kinetic-title{font-size:clamp(64px,8vw,110px)}.profile-editorial .profile-play{display:flex}.profile-editorial .perspective-object{height:230px}}
+@media(min-width:751px){
+.fixed-screens main>section.about.perspective-screen{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto;gap:24px 7%;align-content:start}
+.about.perspective-screen .gallery-title{grid-column:1;grid-row:1}
+.profile-editorial{display:contents}
+.profile-introduction{grid-column:1;grid-row:2;align-self:start;margin-top:12px}
+.profile-focus{grid-column:2;grid-row:1/span 2;align-self:center}
+.profile-editorial-bottom{grid-column:1/-1;grid-row:3;margin-top:12px}
+}
+
+.profile-focus{gap:42px}.profile-editorial .profile-play{gap:24px}.profile-area-copy{min-height:0;padding-top:24px}@media(max-width:750px){.profile-focus{gap:32px}}
+/* Keep the contact action stable when changing the selected discipline. */
+.profile-area-copy{min-height:190px}
+.profile-editorial-bottom{border-top:0;margin-top:0;padding-top:0;justify-content:flex-end}
+@media(max-width:750px){.profile-area-copy{min-height:210px}}

@@ -17,3 +17,10 @@ export function InlineIcon({kind='arrow'}:{kind?:InlineKind}){
  };
  return <svg className="inline-icon" width="1em" height="1em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" style={{display:'inline-block',verticalAlign:'-.12em',flexShrink:0}}>{kind==='dot'?<circle cx="12" cy="12" r="3" fill="currentColor"/>:<path d={paths[kind]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>}</svg>;
 }
+
+/** Familiar navigation symbols with a consistent stroke. */
+export function NavigationPieceIcon({index}:{index:number}){
+ return <svg className="piece-icon navigation-piece-icon" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+ {index===0?<><path d="M3 7V5a1.5 1.5 0 0 1 1.5-1.5H9l2 3h8.5A1.5 1.5 0 0 1 21 8v10.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5V7Z"/><path d="M3 9h18"/></>:index===1?<><circle cx="12" cy="7.5" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></>:<><path d="M20 4H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h4v4l5-4h7a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1Z"/><path d="M8 10h8M8 14h5"/></>}
+ </svg>;
+}
