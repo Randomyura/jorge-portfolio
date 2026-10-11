@@ -55,9 +55,11 @@ function App(){
   // Keep the fixed-screen class declared in JSX across theme updates.
   panels.forEach(panel=>{panel.tabIndex=-1;panel.inert=panel.id!==initial;panel.style.visibility=panel.id===initial?'visible':'hidden';panel.setAttribute('aria-hidden',String(panel.id!==initial));});
   let lastWheel=0,total=0,waitForPause=false,touchY=0,touchAtEdge=false;
+  const insideProject=()=>screenId.current==='work'&&location.hash.startsWith('#work/');
   const edge=(direction:number)=>{const panel=document.getElementById(screenId.current)!;return panel.id==='home'||(direction>0?panel.scrollTop+panel.clientHeight>=panel.scrollHeight-3:panel.scrollTop<=2);};
   const step=(direction:number)=>{const id=ids[ids.indexOf(screenId.current)+direction];if(id){waitForPause=true;navigateRef.current(id);}};
   const wheel=(e:WheelEvent)=>{
+   if(insideProject()){total=0;waitForPause=false;return;}
    if(e.ctrlKey||document.querySelector('dialog[open]')||(e.target as Element).closest('.sprinter-scroll'))return;
    if(container.dataset.pieceBusy==='true'){e.preventDefault();return;}
    const direction=Math.sign(e.deltaY);if(!direction)return;
@@ -70,9 +72,9 @@ function App(){
    if(Math.abs(total)>65){total=0;step(direction);}
   };
   const click=(e:MouseEvent)=>{const link=(e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');if(!link)return;const id=link.hash.slice(1);if(ids.includes(id)){e.preventDefault();navigateRef.current(id);}else if(id==='main'){e.preventDefault();document.getElementById(screenId.current)?.focus();}};
-  const key=(e:KeyboardEvent)=>{if(container.dataset.pieceBusy==='true'||document.querySelector('dialog[open]')||(e.target as Element).closest('button,a,summary,input,textarea,select,[role=slider],[contenteditable=true]')||e.ctrlKey||e.metaKey||e.altKey)return;const d=['ArrowDown','PageDown',' '].includes(e.key)?(e.shiftKey?-1:1):['ArrowUp','PageUp'].includes(e.key)?-1:0;if(d&&edge(d)){e.preventDefault();step(d);}if(e.key==='Home'||e.key==='End'){e.preventDefault();navigateRef.current(e.key==='Home'?ids[0]:ids[ids.length-1]);}};
+  const key=(e:KeyboardEvent)=>{if(insideProject())return;if(container.dataset.pieceBusy==='true'||document.querySelector('dialog[open]')||(e.target as Element).closest('button,a,summary,input,textarea,select,[role=slider],[contenteditable=true]')||e.ctrlKey||e.metaKey||e.altKey)return;const d=['ArrowDown','PageDown',' '].includes(e.key)?(e.shiftKey?-1:1):['ArrowUp','PageUp'].includes(e.key)?-1:0;if(d&&edge(d)){e.preventDefault();step(d);}if(e.key==='Home'||e.key==='End'){e.preventDefault();navigateRef.current(e.key==='Home'?ids[0]:ids[ids.length-1]);}};
   const start=(e:TouchEvent)=>{touchY=e.touches[0].clientY;touchAtEdge=edge(1)||edge(-1);};
-  const end=(e:TouchEvent)=>{if(container.dataset.pieceBusy==='true'||document.querySelector('dialog[open]')||(e.target as Element).closest('button,a,summary,.archive-stage,.sculpture-control,input,textarea,select,[contenteditable=true]'))return;const dy=touchY-e.changedTouches[0].clientY;if(touchAtEdge&&Math.abs(dy)>65&&edge(Math.sign(dy)))step(Math.sign(dy));};
+  const end=(e:TouchEvent)=>{if(insideProject())return;if(container.dataset.pieceBusy==='true'||document.querySelector('dialog[open]')||(e.target as Element).closest('button,a,summary,.archive-stage,.sculpture-control,input,textarea,select,[contenteditable=true]'))return;const dy=touchY-e.changedTouches[0].clientY;if(touchAtEdge&&Math.abs(dy)>65&&edge(Math.sign(dy)))step(Math.sign(dy));};
   const hash=()=>{const id=location.hash.slice(1).split('/')[0];if(ids.includes(id))navigateRef.current(id);};
   container.addEventListener('wheel',wheel,{passive:false});container.addEventListener('click',click);container.addEventListener('touchstart',start,{passive:true});container.addEventListener('touchend',end,{passive:true});window.addEventListener('keydown',key);window.addEventListener('hashchange',hash);
   return()=>{navigationTween.current?.kill();container.removeEventListener('wheel',wheel);container.removeEventListener('click',click);container.removeEventListener('touchstart',start);container.removeEventListener('touchend',end);window.removeEventListener('keydown',key);window.removeEventListener('hashchange',hash);panels.forEach(p=>{p.inert=false;p.removeAttribute('aria-hidden');p.style.removeProperty('visibility');});};
