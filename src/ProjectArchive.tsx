@@ -8,7 +8,7 @@ import {BufaloStory,bufaloImage} from './BufaloStory';
 import {DesignStory,designImage} from './DesignStory';
 import {FlyerStory,flyerImage} from './FlyerStory';
 import {StargyStory,stargyCover} from './StargyStory';
-import {KineticTitle} from './KineticTitle';
+import {GlitchText} from './GlitchText';
 import {HermesStory,hermesImage} from './HermesStory';
 import {InlineIcon} from './PieceIcon';
 import './project-archive.css';
@@ -24,6 +24,16 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
  const categories:{id:Category;label:string;count:number}[]=[{id:'all',label:es?'Todo':'All',count:14},{id:'design',label:es?'Diseño':'Design',count:10},{id:'app',label:'App',count:1},{id:'web',label:'Web',count:2},{id:'3d',label:'3D',count:1}];
  const shows=(group:Category)=>category==='all'||category===group;
  const root=useRef<HTMLDivElement>(null),card=useRef<HTMLAnchorElement>(null);
+ const rail=useRef<HTMLDivElement>(null);
+ const [edges,setEdges]=useState({start:true,end:false});
+ const moveRail=(direction:number)=>{const el=rail.current;if(!el)return;const item=el.querySelector<HTMLElement>('.project-card');const step=(item?.offsetWidth??el.clientWidth*.7)+30;el.scrollBy({left:direction*step,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});};
+ useEffect(()=>{
+  const el=rail.current;if(!el||detail)return;
+  el.scrollLeft=0;
+  const update=()=>setEdges({start:el.scrollLeft<=2,end:el.scrollLeft+el.clientWidth>=el.scrollWidth-2});
+  const wheel=(e:WheelEvent)=>{if(e.ctrlKey||e.metaKey)return;const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(!delta)return;const atEnd=el.scrollLeft+el.clientWidth>=el.scrollWidth-2,atStart=el.scrollLeft<=2;if((delta>0&&atEnd)||(delta<0&&atStart))return;e.preventDefault();el.scrollLeft+=delta*(e.deltaMode===1?16:e.deltaMode===2?el.clientWidth:1);};
+  el.addEventListener('wheel',wheel,{passive:false});el.addEventListener('scroll',update,{passive:true});const observer=new ResizeObserver(update);observer.observe(el);update();return()=>{el.removeEventListener('wheel',wheel);el.removeEventListener('scroll',update);observer.disconnect();};
+ },[detail,category]);
  const positions=useRef(new Map<string,DOMRect>());
  const filter=(next:Category)=>{positions.current=new Map(Array.from(root.current?.querySelectorAll<HTMLAnchorElement>('.project-card')??[]).map(el=>[el.hash,el.getBoundingClientRect()]));setCategory(next);};
  useLayoutEffect(()=>{
@@ -57,10 +67,11 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
    </>}
    <div className="project-page-end"><button className="project-return" onClick={back}><InlineIcon kind="back"/>{es?'Volver a proyectos':'Back to projects'}</button></div>
   </>:<>
-   <div className="project-list-heading project-reveal"><KineticTitle first={es?'En':'In'} second={es?'juego.':'play.'} variant="work"/><span className="project-kicker">{es?'Selección de proyectos':'Selected work'} / 14</span></div>
+   <div className="project-list-heading project-reveal"><h2 className="kinetic-title kinetic-work"><span className="kinetic-line"><GlitchText text={es?'En':'In'}/></span><span className="kinetic-line kinetic-accent"><GlitchText text={es?'juego.':'play.'}/></span></h2><span className="project-kicker">{es?'Selección de proyectos':'Selected work'} / 14</span></div>
    <div className="project-category-filters" role="group" aria-label={es?'Categorías de proyectos':'Project categories'}>{categories.map(c=><button key={c.id} aria-pressed={category===c.id} onClick={()=>filter(c.id)}>{c.label}<span>{c.count}</span></button>)}</div>
    {false&&<p className="project-empty" role="status">{es?'Todavía no hay proyectos publicados en esta categoría.':'There are no projects in this category yet.'}</p>}
-   <div className={`project-grid ${category==='all'?'project-grid-all':''}`}>
+   <div className="project-rail-controls"><span>{es?'Desliza para explorar':'Scroll to explore'}</span><div><button aria-label={es?'Proyectos anteriores':'Previous projects'} disabled={edges.start} onClick={()=>moveRail(-1)}><InlineIcon kind="back"/></button><button aria-label={es?'Proyectos siguientes':'Next projects'} disabled={edges.end} onClick={()=>moveRail(1)}><InlineIcon kind="back"/></button></div></div>
+   <div ref={rail} role="region" aria-label={es?'Fila de proyectos':'Project carousel'} tabIndex={0} className={`project-grid ${category==='all'?'project-grid-all':''}`}>
    {shows('web')&&<a className="project-card project-reveal" href="#work/dark-patterns" onClick={()=>{openedHere.current=true;returnProject.current='dark-patterns';}}><div className="project-card-media"><img src={darkImage('cover')} alt={es?'Diseñado para que no te vayas · web sobre la atención digital':'Designed to keep you here · website about digital attention'}/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div><div className="project-card-caption"><div><span className="project-kicker">014 / Web · HTML, CSS, JavaScript</span><h3>{es?'Diseñado para que no te vayas':'Designed to keep you here'}</h3></div><span className="project-card-arrow"><InlineIcon kind="arrow"/></span></div></a>}
 
    {shows('web')&&<a className="project-card project-reveal sprinter-card" href="#work/sprinter" onClick={()=>{openedHere.current=true;returnProject.current='sprinter';}}><div className="project-card-media"><img src={sprinterImage('home')} alt={es?'Sprinter · propuesta de rediseño web':'Sprinter · website redesign concept'} style={{objectPosition:'top'}}/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div><div className="project-card-caption"><div><span className="project-kicker">013 / Web · Figma</span><h3>Sprinter <span>— {es?'Rediseño web':'Website redesign'}</span></h3></div><span className="project-card-arrow"><InlineIcon kind="arrow"/></span></div></a>}
