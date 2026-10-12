@@ -1,113 +1,35 @@
-import React, {useEffect,useRef,useState} from 'react';
+import React,{useEffect,useRef,useState,type CSSProperties} from 'react';
 import {createRoot} from 'react-dom/client';
-import gsap from 'gsap';
-import './playground.css';
-import './atelier.css';
-import './lab.css';
-import {LivingField} from './Experiments';
-import {ProfilePlay,ContactPlay} from './NextScreens';
-import './next-screens.css';
-import {Navigation} from './Navigation';
-import {KineticTitle} from './KineticTitle';
-import {PieceNavigation} from './PieceNavigation';
-import {screenMotion,type TransitionOrigin} from './screenMotion';
-import './piece-motion.css';
-import {HeaderControls} from './HeaderControls';
-import {Footer} from './Footer';
-import './refinements.css';
 import {ProjectArchive} from './ProjectArchive';
-import {CursorExperience} from './CursorExperience';
-import './profile-editorial.css';
-type Lang='es'|'en';
-const words={es:{work:'Proyectos',about:'Sobre mí',hello:'Hablemos',hint:'Elige una pieza.',title:'Fuera del',second:'molde.',intro:'Gráfico. Web. App. 3D.',selected:'Cosas que he',made:'puesto en juego.',demo:'Conceptos de muestra · proyectos reales pendientes',bio:'Soy Jorge Sunyer Guirado. Me interesa lo que pasa cuando el diseño y el código dejan de ir por separado. Trabajo en diseño gráfico, web, app y 3D: distintas herramientas para dar forma a una idea.',cta:'¿Y si probamos',cta2:'algo distinto?',note:'Contacto real pendiente de configurar',reset:'Otra vez',close:'Cerrar',drag:'Pieza interactiva. Usa las flechas para moverla; Enter para girarla.',detail:'Este experimento es una muestra interactiva para explorar el portafolio, no un encargo real.'},en:{work:'Work',about:'About me',hello:'Let’s talk',hint:'Choose a piece.',title:'Beyond the',second:'expected.',intro:'Graphic. Web. App. 3D.',selected:'Things I have',made:'put into play.',demo:'Sample concepts · real projects to be added',bio:'I’m Jorge Sunyer Guirado. I’m interested in what happens when design and code stop being separate. I work across graphic, web, app and 3D design: different tools to give an idea its shape.',cta:'What if we try',cta2:'something different?',note:'Real contact to be configured',reset:'Play again',close:'Close',drag:'Interactive piece. Use arrow keys to move it; Enter to rotate it.',detail:'This experiment is an interactive portfolio sample, not a client commission.'}};
+import {stargyCover} from './StargyStory';
+import {sprinterImage} from './SprinterStory';
+import {app156Image} from './App156Story';
+import {contactEmail} from './contact';
+import './reimagined.css';
 function App(){
- const [lang,setLang]=useState<Lang>(()=>localStorage.getItem('jorge-language')==='en'?'en':'es');
- const [dark,setDark]=useState(()=>localStorage.getItem('jorge-theme')==='dark');
- const [activeScreen,setActiveScreen]=useState(()=>['home','work','about','contact'].includes(location.hash.slice(1).split('/')[0])?location.hash.slice(1).split('/')[0]:'home');
- const page=useRef<HTMLDivElement>(null);
- const t=words[lang];
- useEffect(()=>{document.documentElement.lang=lang;localStorage.setItem('jorge-language',lang);},[lang]);
- useEffect(()=>{localStorage.setItem('jorge-theme',dark?'dark':'light');document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#15171c':'#eeede8');},[dark]);
- useEffect(()=>{const title=activeScreen==='home'?'Creative Developer':activeScreen==='work'?t.work:activeScreen==='about'?t.about:t.hello;document.title=`Jorge Sunyer Guirado — ${title}`;},[activeScreen,lang]);
- const languageMotion=useRef<gsap.core.Timeline|null>(null);
- useEffect(()=>()=>{languageMotion.current?.kill();},[]);
- useEffect(()=>{
-  const mm=gsap.matchMedia();mm.add('(prefers-reduced-motion: no-preference)',()=>{const ctx=gsap.context(()=>{gsap.from('.toy',{scale:0,rotation:-70,duration:.9,stagger:.12,ease:'back.out(1.5)',delay:.3});},page);return()=>ctx.revert();});return()=>mm.revert();
- },[]);
- const motion=()=>!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const transition=useRef<HTMLDivElement>(null),navigating=useRef(false);
- const screenId=useRef('home'),navigateRef=useRef<(id:string)=>void>(()=>{});
- const navigationTween=useRef<gsap.core.Timeline|null>(null);
- const navigate=(id:string,origin?:TransitionOrigin)=>{
-  const section=document.getElementById(id),outgoing=document.getElementById(screenId.current);
-  if(!section||!outgoing||navigating.current||id===screenId.current)return;
-  const open=()=>{page.current?.querySelectorAll<HTMLElement>('main>section').forEach(panel=>{const shown=panel.id===id;panel.inert=!shown;panel.style.visibility=shown?'visible':'hidden';panel.setAttribute('aria-hidden',String(!shown));});screenId.current=id;setActiveScreen(id);section.scrollTop=0;section.tabIndex=-1;section.focus({preventScroll:true});history.replaceState(null,'','#'+id);};
-  if(!motion()){open();return;}
-  navigating.current=true;
-  navigationTween.current=screenMotion({id,outgoing,incoming:section,overlay:transition.current!,open,origin,complete:()=>{navigating.current=false;}});
- };
- navigateRef.current=navigate;
- const changeLanguage=(next:Lang)=>{if(next===lang||navigating.current)return;languageMotion.current?.kill();const main=page.current!.querySelector('main')!;if(!motion()){setLang(next);return;}navigating.current=true;languageMotion.current=gsap.timeline({onComplete:()=>{navigating.current=false;}}).to(main,{opacity:.3,filter:'blur(3px)',duration:.16,ease:'power2.in'}).call(()=>setLang(next)).to(main,{opacity:1,filter:'blur(0px)',duration:.3,ease:'power2.out',clearProps:'opacity,filter'});};
- useEffect(()=>{
-  const container=page.current!;
-  const panels=Array.from(container.querySelectorAll<HTMLElement>('main>section'));
-  const ids=panels.map(p=>p.id);
-  const initial=ids.includes(location.hash.slice(1).split('/')[0])?location.hash.slice(1).split('/')[0]:'home';screenId.current=initial;
-  // Keep the fixed-screen class declared in JSX across theme updates.
-  panels.forEach(panel=>{panel.tabIndex=-1;panel.inert=panel.id!==initial;panel.style.visibility=panel.id===initial?'visible':'hidden';panel.setAttribute('aria-hidden',String(panel.id!==initial));});
-  let lastWheel=0,total=0,waitForPause=false,touchY=0,touchAtEdge=false;
-  const insideProject=()=>screenId.current==='work'&&location.hash.startsWith('#work/');
-  const edge=(direction:number)=>{const panel=document.getElementById(screenId.current)!;return panel.id==='home'||(direction>0?panel.scrollTop+panel.clientHeight>=panel.scrollHeight-3:panel.scrollTop<=2);};
-  const step=(direction:number)=>{const id=ids[ids.indexOf(screenId.current)+direction];if(id){waitForPause=true;navigateRef.current(id);}};
-  const wheel=(e:WheelEvent)=>{
-   if(insideProject()){total=0;waitForPause=false;return;}
-   if(e.ctrlKey||document.querySelector('dialog[open]')||(e.target as Element).closest('.sprinter-scroll'))return;
-   if(container.dataset.pieceBusy==='true'){e.preventDefault();return;}
-   const direction=Math.sign(e.deltaY);if(!direction)return;
-   if(!navigating.current&&!edge(direction)){total=0;return;}
-   e.preventDefault();const now=performance.now();
-   if(navigating.current){lastWheel=now;total=0;return;}
-   if(waitForPause&&now-lastWheel<180){lastWheel=now;return;}
-   waitForPause=false;if(now-lastWheel>180)total=0;lastWheel=now;
-   total+=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?window.innerHeight:1);
-   if(Math.abs(total)>65){total=0;step(direction);}
-  };
-  const click=(e:MouseEvent)=>{const link=(e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');if(!link)return;const id=link.hash.slice(1);if(ids.includes(id)){e.preventDefault();navigateRef.current(id);}else if(id==='main'){e.preventDefault();document.getElementById(screenId.current)?.focus();}};
-  const key=(e:KeyboardEvent)=>{if(insideProject())return;if(container.dataset.pieceBusy==='true'||document.querySelector('dialog[open]')||(e.target as Element).closest('button,a,summary,input,textarea,select,[role=slider],[contenteditable=true]')||e.ctrlKey||e.metaKey||e.altKey)return;const d=['ArrowDown','PageDown',' '].includes(e.key)?(e.shiftKey?-1:1):['ArrowUp','PageUp'].includes(e.key)?-1:0;if(d&&edge(d)){e.preventDefault();step(d);}if(e.key==='Home'||e.key==='End'){e.preventDefault();navigateRef.current(e.key==='Home'?ids[0]:ids[ids.length-1]);}};
-  const start=(e:TouchEvent)=>{touchY=e.touches[0].clientY;touchAtEdge=edge(1)||edge(-1);};
-  const end=(e:TouchEvent)=>{if(insideProject())return;if(container.dataset.pieceBusy==='true'||document.querySelector('dialog[open]')||(e.target as Element).closest('button,a,summary,.archive-stage,.sculpture-control,input,textarea,select,[contenteditable=true]'))return;const dy=touchY-e.changedTouches[0].clientY;if(touchAtEdge&&Math.abs(dy)>65&&edge(Math.sign(dy)))step(Math.sign(dy));};
-  const hash=()=>{const id=location.hash.slice(1).split('/')[0];if(ids.includes(id))navigateRef.current(id);};
-  container.addEventListener('wheel',wheel,{passive:false});container.addEventListener('click',click);container.addEventListener('touchstart',start,{passive:true});container.addEventListener('touchend',end,{passive:true});window.addEventListener('keydown',key);window.addEventListener('hashchange',hash);
-  return()=>{navigationTween.current?.kill();container.removeEventListener('wheel',wheel);container.removeEventListener('click',click);container.removeEventListener('touchstart',start);container.removeEventListener('touchend',end);window.removeEventListener('keydown',key);window.removeEventListener('hashchange',hash);panels.forEach(p=>{p.inert=false;p.removeAttribute('aria-hidden');p.style.removeProperty('visibility');});};
- },[]);
- return <div className={`play-site fixed-screens ${dark?'dark':''}`} data-screen={activeScreen} ref={page}>
- <div className="navigation-transition spatial-transition" ref={transition} aria-hidden="true"><div className="transition-orb"/><div className="transition-turn"/><div className="transition-fold transition-fold-top"/><div className="transition-fold transition-fold-bottom"/></div>
- <a className="skip" href="#main">{lang==='es'?'Saltar al contenido':'Skip to content'}</a>
- <header><a className="signature" href="#home">Jorge Sunyer Guirado<span>Creative Developer</span></a><Navigation lang={lang} labels={[t.work,t.about,t.hello]} screen={activeScreen}/><HeaderControls lang={lang} dark={dark} onTheme={()=>setDark(!dark)} onLanguage={changeLanguage}/></header>
- <main id="main"><section className="hero" id="home"><LivingField/><KineticTitle first={t.title} second={t.second} variant="home" level={1}/><PieceNavigation lang={lang} labels={[t.work,t.about,t.hello]} hint={t.hint} isActive={activeScreen==='home'} onNavigate={navigate}/></section>
- <section className="work archive-screen" id="work"><LivingField variant="work"/><ProjectArchive lang={lang} isActive={activeScreen==='work'}/></section>
- <section className="about perspective-screen" id="about"><LivingField variant="about"/><div className="gallery-title"><KineticTitle first={lang==='es'?'Cruzar':'Fresh'} second={lang==='es'?'miradas.':'perspectives.'} variant="about"/></div><ProfilePlay lang={lang}/></section>
- <section className="contact letter-screen" id="contact"><LivingField variant="contact"/><div className="gallery-title"><KineticTitle first={lang==='es'?'Lo que':'What comes'} second={lang==='es'?'viene.':'next.'} variant="contact"/></div><ContactPlay lang={lang}/></section></main>
- <Footer lang={lang} screen={activeScreen}/>
- <CursorExperience/>
+ const [lang,setLang]=useState<'es'|'en'>('es'),[hash,setHash]=useState(location.hash),[menu,setMenu]=useState(false);
+ const es=lang==='es',detail=hash.startsWith('#work/'),shape=useRef<HTMLButtonElement>(null),scrollPosition=useRef(0);
+ const [turn,setTurn]=useState(0);
+ useEffect(()=>{const sync=()=>{const next=location.hash;if(next.startsWith('#work/')){if(!hash.startsWith('#work/'))scrollPosition.current=scrollY;window.scrollTo(0,0);}setHash(next);setMenu(false);};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[hash]);
+ useEffect(()=>{document.documentElement.lang=lang;document.title=`Jorge Sunyer Guirado — ${detail?(es?'Proyectos':'Work'):'Creative Developer'}`;if(detail){window.scrollTo(0,0);}else{const id=hash.slice(1);requestAnimationFrame(()=>{if(id==='work'&&scrollPosition.current){window.scrollTo(0,scrollPosition.current);scrollPosition.current=0;}else if(!id||id==='home')window.scrollTo(0,0);else document.getElementById(id)?.scrollIntoView({behavior:'instant'});});}},[hash,detail]);
+ useEffect(()=>{if(detail)return;const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');observer.unobserve(e.target);}}),{threshold:.08});document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));return()=>observer.disconnect();},[detail]);
+ const featured=[{id:'stargy',name:'STARGY',kind:es?'Identidad visual':'Visual identity',image:stargyCover,number:'002'},{id:'sprinter',name:'Sprinter',kind:'Web · UI/UX',image:sprinterImage('home'),number:'013'},{id:'app156',name:'App 156',kind:'App · UI/UX',image:app156Image,number:'012'}];
+ return <div className="reimagined">
+ <a className="new-skip" href="#work">{es?'Ir a los proyectos':'Skip to projects'}</a>
+ <header className="new-header"><a className="new-signature" href="#home">JORGE<br/>SUNYER<span>CREATIVE DEVELOPER</span></a><nav aria-label={es?'Principal':'Main'}><a href="#work">01 / {es?'Proyectos':'Work'}</a><a href="#about">02 / {es?'Sobre mí':'About'}</a><a href="#contact">03 / {es?'Hablemos':'Contact'}</a></nav><div className="new-header-actions"><button onClick={()=>setLang(es?'en':'es')} aria-label={es?'Cambiar a inglés':'Switch to Spanish'}>{es?'ES':'EN'}</button><button className="new-menu-trigger" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?'×':'☰'}</button></div></header>
+ {menu&&<nav className="new-mobile-menu"><a href="#work">{es?'Proyectos':'Work'}</a><a href="#about">{es?'Sobre mí':'About'}</a><a href="#contact">{es?'Hablemos':'Contact'}</a></nav>}
+ {!detail&&<>
+ <section className="new-hero" id="home"><div className="hero-meta"><span>{es?'Diseño gráfico & experiencias digitales':'Graphic design & digital experiences'}</span><span>PORTFOLIO / 2026</span></div><h1><span>{es?'Otra forma':'A different way'}</span><em>{es?'de mirar.':'of seeing.'}</em></h1>
+ <div className="hero-art-stage"><div className="art-window"/><span className="stage-mark">JS — EXPLORACIÓN 01</span><button ref={shape} className="hero-art" aria-label={es?'Girar la pieza interactiva':'Rotate the interactive piece'} onClick={()=>setTurn(n=>n+90)} onPointerMove={e=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--art-x',`${(e.clientY-r.top-r.height/2)*-.04}deg`);e.currentTarget.style.setProperty('--art-y',`${(e.clientX-r.left-r.width/2)*.05}deg`);}} onPointerLeave={e=>{e.currentTarget.style.setProperty('--art-x','0deg');e.currentTarget.style.setProperty('--art-y','0deg');}}><div className="art-object" style={{'--turn':`${turn}deg`} as CSSProperties}>{Array.from({length:12},(_,i)=><span key={i} className="art-blade" style={{'--blade':i} as CSSProperties}/>)}</div></button><div className="art-shadow"/><span className="art-note">{es?'Mueve el cursor. Cambia la perspectiva.':'Move your cursor. Change perspective.'}</span></div>
+ <div className="hero-foot"><p>{es?'Doy forma a identidades, webs y aplicaciones. Me interesa lo que sucede entre una buena idea y una experiencia que se recuerda.':'I shape identities, websites and apps. I’m interested in what happens between a good idea and an experience you remember.'}</p><a href="#work">{es?'ENTRA EN MI UNIVERSO':'STEP INTO MY WORLD'}<span>↓</span></a></div></section>
+ <div className="discipline-strip" aria-hidden="true"><span>GRÁFICO</span><i>✳</i><span>WEB</span><i>✳</i><span>APP</span><i>✳</i><span>IDEAS EN MOVIMIENTO</span></div>
+ <section className="new-manifesto reveal"><span className="eyebrow">01 / {es?'La mirada':'The approach'}</span><p>{es?'El diseño empieza con una pregunta.':'Design begins with a question.'}<br/><em>{es?'¿Y si lo vemos de otra manera?':'What if we see it differently?'}</em></p><span className="manifesto-star" aria-hidden="true">✳</span></section>
+ <section className="featured-section" id="featured"><div className="new-section-head reveal"><span className="eyebrow">{es?'Una selección para empezar':'A selection to start with'}</span><h2>{es?'Ideas que':'Ideas taking'} <em>{es?'toman forma.':'shape.'}</em></h2></div><div className="featured-grid">{featured.map((p,i)=><a className={`featured-project featured-${i} reveal`} href={`#work/${p.id}`} key={p.id}><div className="featured-image"><img src={p.image} alt={p.name} style={p.id==='sprinter'?{objectPosition:'top'}:undefined}/><span className="featured-open">↗</span></div><div className="featured-caption"><h3>{p.name}</h3><span>{p.number} / {p.kind}</span></div></a>)}</div></section>
+ </>}
+ <section id="work" className={detail?'new-detail':'new-archive'}><ProjectArchive lang={lang} isActive={true}/></section>
+ {!detail&&<><section className="new-about" id="about"><div className="about-label reveal"><span className="eyebrow">02 / {es?'Sobre mí':'About me'}</span><span className="about-symbol" aria-hidden="true">↗</span></div><div className="about-body reveal"><h2>{es?'Entre lo visual':'Between the visual'}<br/><em>{es?'y lo digital.':'and the digital.'}</em></h2><p>{es?'Soy Jorge Sunyer Guirado. Me interesa crear identidades visuales e interfaces para web y aplicaciones, combinando diseño gráfico y UI/UX.':'I’m Jorge Sunyer Guirado. I’m interested in creating visual identities and interfaces for websites and apps, combining graphic design and UI/UX.'}</p><div className="about-disciplines"><span>01 <b>{es?'Diseño gráfico':'Graphic design'}</b></span><span>02 <b>Web · UI/UX</b></span><span>03 <b>App · UI/UX</b></span></div></div></section>
+ <section className="new-contact" id="contact"><div className="contact-top"><span className="eyebrow">03 / {es?'Lo siguiente':'What’s next'}</span><span>JORGE SUNYER GUIRADO</span></div><a className="contact-invitation" href={`mailto:${contactEmail}`}><span>{es?'Hagamos':'Let’s make'}</span><em>{es?'algo distinto.':'something different.'}</em><b>↗</b></a><div className="contact-bottom"><a href={`mailto:${contactEmail}`}>{contactEmail}</a><a href="#home">{es?'Volver arriba':'Back to top'} ↑</a></div></section></>}
+ <footer className="new-footer"><span>© 2026 / Jorge Sunyer Guirado</span><span>{es?'Diseño con intención.':'Design with intention.'}</span></footer>
  </div>;
 }
-const appRoot=createRoot(document.getElementById('root')!);
-appRoot.render(<React.StrictMode><App/></React.StrictMode>);
-if(import.meta.hot)import.meta.hot.dispose(()=>appRoot.unmount());
-
-// playground v2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const root=createRoot(document.getElementById('root')!);root.render(<React.StrictMode><App/></React.StrictMode>);if(import.meta.hot)import.meta.hot.dispose(()=>root.unmount());

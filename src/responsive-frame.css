@@ -1,0 +1,13 @@
+.responsive-frame{position:absolute;inset:24px 3% 52px;pointer-events:none;z-index:1;transform:translate(var(--frame-x,0px),var(--frame-y,0px));transition:transform .65s cubic-bezier(.2,.8,.2,1)}
+.frame-corner{position:absolute;width:42px;height:42px;border-color:color-mix(in srgb,var(--ink) 18%,transparent);border-style:solid;border-width:0;transition:width .45s,height .45s,border-color .45s,transform .45s}
+.corner-tl{left:0;top:0;border-left-width:1px;border-top-width:1px}
+.corner-tr{right:0;top:0;border-right-width:1px;border-top-width:1px}
+.corner-bl{left:0;bottom:0;border-left-width:1px;border-bottom-width:1px}
+.corner-br{right:0;bottom:0;border-right-width:1px;border-bottom-width:1px}
+.frame-held .frame-corner{width:62px;height:62px;border-color:var(--signal)}
+.frame-held .corner-tl{transform:translate(-6px,-6px)}.frame-held .corner-br{transform:translate(6px,6px)}
+.frame-axis{position:absolute;top:50%;right:-4px;width:9px;height:1px;background:var(--signal);opacity:.5}
+.hero .kinetic-glyph{transition:translate .35s cubic-bezier(.2,.8,.2,1),color .3s}
+@media(hover:hover){.piece-field .toy.is-dragging .toy-object{filter:drop-shadow(0 22px 16px #0003) brightness(1.08)}.piece-field .toy.is-dragging{cursor:grabbing}}
+@media(max-width:600px){.responsive-frame{inset:14px 3% 48px}.frame-corner{width:24px;height:24px}.frame-held .frame-corner{width:32px;height:32px}}
+@media(prefers-reduced-motion:reduce){.responsive-frame,.frame-corner,.hero .kinetic-glyph{transition:none}}

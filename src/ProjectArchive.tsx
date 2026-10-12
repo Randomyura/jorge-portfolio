@@ -1,5 +1,5 @@
 import {DarkPatternsStory,darkImage} from './DarkPatternsStory';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import gsap from 'gsap';
 import {SprinterStory,sprinterImage} from './SprinterStory';
 import {App156Story,app156Image} from './App156Story';
@@ -24,6 +24,14 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
  const categories:{id:Category;label:string;count:number}[]=[{id:'all',label:es?'Todo':'All',count:14},{id:'design',label:es?'Diseño':'Design',count:10},{id:'app',label:'App',count:1},{id:'web',label:'Web',count:2},{id:'3d',label:'3D',count:1}];
  const shows=(group:Category)=>category==='all'||category===group;
  const root=useRef<HTMLDivElement>(null),card=useRef<HTMLAnchorElement>(null);
+ const positions=useRef(new Map<string,DOMRect>());
+ const filter=(next:Category)=>{positions.current=new Map(Array.from(root.current?.querySelectorAll<HTMLAnchorElement>('.project-card')??[]).map(el=>[el.hash,el.getBoundingClientRect()]));setCategory(next);};
+ useLayoutEffect(()=>{
+  if(detail||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const cards=Array.from(root.current?.querySelectorAll<HTMLAnchorElement>('.project-card')??[]);
+  const tweens=cards.map((el,i)=>{const old=positions.current.get(el.hash),now=el.getBoundingClientRect();return gsap.fromTo(el,{x:old?old.left-now.left:0,y:old?old.top-now.top:24,opacity:old?1:0},{x:0,y:0,opacity:1,duration:.55,delay:old?0:i*.035,ease:'power3.out',clearProps:'transform,opacity'});});
+  return()=>tweens.forEach(t=>t.kill());
+ },[category]);
  const returnProject=useRef('hermes');
  const openedHere=useRef(false),restoreFocus=useRef(false);
  useEffect(()=>{
@@ -35,7 +43,7 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
   root.current?.closest('section')?.scrollTo(0,0);
   if(detail){root.current?.querySelector<HTMLElement>('.project-return')?.focus({preventScroll:true});}
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const ctx=gsap.context(()=>{gsap.fromTo('.project-reveal',{y:22,opacity:0},{y:0,opacity:1,duration:.65,stagger:.08,ease:'power3.out',clearProps:'all'});},root);
+  const ctx=gsap.context(()=>{if(detail){gsap.fromTo(root.current,{y:10,opacity:0},{y:0,opacity:1,duration:.38,ease:'power2.out',clearProps:'transform,opacity'});}else{gsap.fromTo('.project-reveal',{y:18,opacity:0},{y:0,opacity:1,duration:.5,stagger:.035,ease:'power3.out',clearProps:'transform,opacity'});}},root);
   return()=>ctx.revert();
  },[isActive,detail]);
  const back=()=>{restoreFocus.current=true;if(openedHere.current){openedHere.current=false;history.back();}else{location.hash='work';}};
@@ -50,7 +58,7 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
    <div className="project-page-end"><button className="project-return" onClick={back}><InlineIcon kind="back"/>{es?'Volver a proyectos':'Back to projects'}</button></div>
   </>:<>
    <div className="project-list-heading project-reveal"><KineticTitle first={es?'En':'In'} second={es?'juego.':'play.'} variant="work"/><span className="project-kicker">{es?'Selección de proyectos':'Selected work'} / 14</span></div>
-   <div className="project-category-filters" role="group" aria-label={es?'Categorías de proyectos':'Project categories'}>{categories.map(c=><button key={c.id} aria-pressed={category===c.id} onClick={()=>setCategory(c.id)}>{c.label}<span>{c.count}</span></button>)}</div>
+   <div className="project-category-filters" role="group" aria-label={es?'Categorías de proyectos':'Project categories'}>{categories.map(c=><button key={c.id} aria-pressed={category===c.id} onClick={()=>filter(c.id)}>{c.label}<span>{c.count}</span></button>)}</div>
    {false&&<p className="project-empty" role="status">{es?'Todavía no hay proyectos publicados en esta categoría.':'There are no projects in this category yet.'}</p>}
    <div className={`project-grid ${category==='all'?'project-grid-all':''}`}>
    {shows('web')&&<a className="project-card project-reveal" href="#work/dark-patterns" onClick={()=>{openedHere.current=true;returnProject.current='dark-patterns';}}><div className="project-card-media"><img src={darkImage('cover')} alt={es?'Diseñado para que no te vayas · web sobre la atención digital':'Designed to keep you here · website about digital attention'}/><span className="project-card-open">{es?'Ver proyecto':'View project'}<InlineIcon kind="arrow"/></span></div><div className="project-card-caption"><div><span className="project-kicker">014 / Web · HTML, CSS, JavaScript</span><h3>{es?'Diseñado para que no te vayas':'Designed to keep you here'}</h3></div><span className="project-card-arrow"><InlineIcon kind="arrow"/></span></div></a>}
