@@ -12,3 +12,44 @@
 @media(max-width:1000px){.project-grid-all{grid-template-columns:repeat(3,minmax(0,1fr))}.new-hero{min-height:760px}.new-hero h1{font-size:11vw}.hero-art-stage{height:350px}.art-object{width:200px;height:250px}.new-manifesto{padding:90px 6%}.featured-caption{display:block}.featured-caption>span{display:block;margin-top:10px}}
 @media(max-width:650px){.new-header{padding:22px 5%}.new-header nav{display:none}.new-menu-trigger{display:block!important}.new-signature{font-size:19px}.hero-meta{font-size:8px;gap:20px}.hero-meta span:first-child{max-width:180px}.new-hero{min-height:0;padding-bottom:45px}.new-hero h1{font-size:17vw;margin-top:45px;line-height:.95}.new-hero h1 em{margin-left:16%;font-size:1.3em}.hero-art-stage{margin-top:18px;height:315px}.hero-art{width:100%;left:0}.art-object{width:165px;height:210px}.art-blade{border-width:14px}.art-window{border-radius:80px 0 80px 0}.stage-mark{left:18px;top:40px;font-size:7px}.art-note{right:22px;bottom:46px;font-size:8px;max-width:125px}.hero-foot{display:block}.hero-foot p{font-size:13px;max-width:90%}.hero-foot>a{justify-content:space-between;margin-top:25px}.discipline-strip{justify-content:start;padding:22px 5%;font-size:19px;gap:20px}.new-manifesto{padding:80px 6%}.new-manifesto p{font-size:34px;margin-top:25px}.manifesto-star{font-size:65px;top:45px}.featured-section{padding-bottom:70px}.new-section-head h2{font-size:45px;margin-bottom:35px}.featured-grid{grid-template-columns:1fr;gap:45px}.featured-1{margin:0}.featured-2{width:100%;margin:0}.featured-1 .featured-image{aspect-ratio:4/3}.featured-caption{display:flex}.featured-caption h3{font-size:22px}.new-archive{padding:60px 5%}.project-grid,.project-grid-all{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 18px}.project-card-caption h3{font-size:15px}.project-card-arrow{display:none}.project-category-filters{gap:7px}.project-category-filters button{font-size:11px;padding:10px 13px}.project-category-filters button span{margin-left:8px}.new-archive .project-list-heading{display:block}.new-archive .project-list-heading>.project-kicker{display:block;margin-top:22px}.new-about{padding:80px 6%;grid-template-columns:1fr;gap:35px}.about-symbol{display:none}.about-body h2{font-size:48px}.about-body>p{font-size:17px}.contact-invitation{font-size:15vw;padding:75px 0}.contact-invitation em{margin-left:0}.contact-invitation b{font-size:50px;top:30px}.contact-top{font-size:8px}.contact-bottom{font-size:10px;flex-wrap:wrap}.new-footer{gap:15px;font-size:8px}.new-detail{padding:25px 5% 60px}}
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.art-object,.featured-image img,.featured-open,.contact-invitation b{transition:none}}
+
+.visual-icon{display:inline-block;width:1em;height:1em;vertical-align:middle;flex-shrink:0}
+.new-menu-trigger .visual-icon{width:22px;height:22px}
+.hero-foot>a>span{display:flex;align-items:center}
+.discipline-strip i{display:flex;align-items:center}
+.manifesto-star,.about-symbol{display:block;line-height:1}
+.featured-open .visual-icon{width:25px;height:25px}
+.contact-bottom .visual-icon{width:15px;height:15px;margin-left:8px}
+
+.discipline-strip{display:block;overflow:hidden;padding:28px 0}
+.discipline-track{display:flex;width:max-content;animation:discipline-travel 32s linear infinite;will-change:transform}
+.discipline-group{display:flex;align-items:center;justify-content:space-around;gap:clamp(28px,5vw,90px);min-width:100vw;padding-right:clamp(28px,5vw,90px);flex-shrink:0}
+@keyframes discipline-travel{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(max-width:650px){.discipline-strip{padding:22px 0}.discipline-group{gap:30px;padding-right:30px}.discipline-track{animation-duration:26s}}
+@media(prefers-reduced-motion:reduce){.discipline-track{animation:none;will-change:auto}}
+/* Featured projects enter from their side of the editorial layout. */
+.featured-project.reveal{transform:translateX(-85px);transition:opacity .85s ease,transform 1.1s cubic-bezier(.16,1,.3,1)}
+.featured-project.featured-1.reveal{transform:translateX(85px)}
+.featured-project.reveal.is-visible{opacity:1;transform:translateX(0)}
+@media(max-width:650px){.featured-project.reveal{transform:translateX(-35px)}.featured-project.featured-1.reveal{transform:translateX(35px)}.featured-project.reveal.is-visible{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.featured-project.reveal,.featured-project.featured-1.reveal{opacity:1;transform:none;transition:none}}
+.featured-2{width:100%;margin-left:0}
+.featured-2 .featured-image{aspect-ratio:1/1}
+@media(max-width:650px){.featured-2 .featured-image{aspect-ratio:4/3}}
+@media(min-width:651px){.featured-2{margin-top:-120px}}
+/* Give the opening headline room before the interactive stage. */
+.hero-art-stage{margin-top:42px}
+@media(max-width:650px){.hero-art-stage{margin-top:40px}}
+/* Keep the sculpture annotations inside the visible frame. */
+.stage-mark{top:58px;left:34px;max-height:calc(100% - 130px);writing-mode:horizontal-tb}
+.art-note{right:38px;bottom:55px;max-width:230px;line-height:1.5;text-align:right;z-index:3;pointer-events:none}
+@media(max-width:650px){.stage-mark{top:38px;left:22px;font-size:7px}.art-note{right:24px;bottom:45px;max-width:150px;font-size:8px}}
+.stage-mark{writing-mode:vertical-rl;top:92px;left:36px;max-height:210px;z-index:3}
+.art-note{right:70px;bottom:78px;max-width:210px}
+@media(max-width:650px){.stage-mark{top:78px;left:26px;max-height:155px}.art-note{right:48px;bottom:72px;max-width:135px}}
+/* Solid band with hollow lettering. */
+.discipline-strip{background:var(--wine);border-color:var(--wine);color:#f5f2eb}
+.discipline-group>span{color:transparent;-webkit-text-stroke:1px #f5f2eb}
+.discipline-strip i{color:#f5f2eb}
+.discipline-group>span{color:var(--paper);-webkit-text-stroke:0}
+.discipline-strip i{color:var(--paper)}
