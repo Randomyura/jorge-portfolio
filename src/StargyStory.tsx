@@ -1,3 +1,4 @@
+import {VisualIcon} from './VisualIcon';
 import './stargy.css';
 export const stargyImage=(page:number)=>`${import.meta.env.BASE_URL}projects/stargy/page-${String(page).padStart(2,'0')}.webp`;
 export const stargyCover=`${import.meta.env.BASE_URL}projects/stargy/cover.webp`;
@@ -9,7 +10,7 @@ const chapters=[
  {id:'applications',es:'Aplicaciones',en:'Applications',titleEs:'Una identidad que sale a la calle.',titleEn:'An identity out in the world.',esText:'La propuesta se extiende a señalética, publicidad exterior, botella y vaso. Los mockups del manual exploran la presencia de la marca en diferentes contextos.',enText:'The concept extends to signage, outdoor advertising, a bottle and a cup. The manual’s mockups explore how the brand appears in different contexts.',pages:[14,15,16]},
  {id:'marketing',es:'Marketing',en:'Marketing',titleEs:'Más allá del logotipo.',titleEn:'Beyond the logo.',esText:'El cierre del manual plantea ideas de activación y piezas promocionales: camiseta, gorra y envases de bebida. Las propuestas amplían el sistema visual a nuevos puntos de contacto.',enText:'The final part of the manual proposes activation ideas and promotional pieces: a T-shirt, cap and beverage packaging. These concepts extend the visual system to new touchpoints.',pages:[17,18,19,20]},
 ];
-function Pages({pages,lang}:{pages:number[];lang:'es'|'en'}){return <div className={`stargy-pages ${pages.length===1?'stargy-pages-single':''}`}>{pages.map(page=><figure key={page}><a href={stargyImage(page)} target="_blank" rel="noreferrer" aria-label={lang==='es'?`Ampliar página ${page} del manual`:`Enlarge manual page ${page}`}><img src={stargyImage(page)} alt={lang==='es'?`STARGY · página ${page} del manual de identidad`:`STARGY · identity manual page ${page}`} loading="lazy" width="1400" height="788"/></a><figcaption>{lang==='es'?'Manual de identidad':'Identity manual'} / {String(page).padStart(2,'0')} <span>↗</span></figcaption></figure>)}</div>}
+function Pages({pages,lang}:{pages:number[];lang:'es'|'en'}){return <div className={`stargy-pages ${pages.length===1?'stargy-pages-single':''}`}>{pages.map(page=><figure key={page}><a href={stargyImage(page)} target="_blank" rel="noreferrer" aria-label={lang==='es'?`Ampliar página ${page} del manual`:`Enlarge manual page ${page}`}><img src={stargyImage(page)} alt={lang==='es'?`STARGY · página ${page} del manual de identidad`:`STARGY · identity manual page ${page}`} loading="lazy" width="1400" height="788"/></a><figcaption>{lang==='es'?'Manual de identidad':'Identity manual'} / {String(page).padStart(2,'0')} <span><VisualIcon kind="arrow"/></span></figcaption></figure>)}</div>}
 export function StargyStory({lang}:{lang:'es'|'en'}){
  const es=lang==='es';
  return <>
