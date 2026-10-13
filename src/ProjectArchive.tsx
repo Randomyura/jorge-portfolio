@@ -53,7 +53,7 @@ export function ProjectArchive({lang,isActive}:{lang:Lang;isActive:boolean}){
   root.current?.closest('section')?.scrollTo(0,0);
   if(detail){root.current?.querySelector<HTMLElement>('.project-return')?.focus({preventScroll:true});}
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const ctx=gsap.context(()=>{if(detail){gsap.fromTo(root.current,{y:10,opacity:0},{y:0,opacity:1,duration:.38,ease:'power2.out',clearProps:'transform,opacity'});}else{gsap.fromTo('.project-reveal',{y:18,opacity:0},{y:0,opacity:1,duration:.5,stagger:.035,ease:'power3.out',clearProps:'transform,opacity'});}},root);
+  const ctx=gsap.context(()=>{if(detail){gsap.fromTo(root.current,{opacity:0},{opacity:1,duration:.55,ease:'power2.out',clearProps:'opacity'});}else{gsap.fromTo('.project-reveal',{y:18,opacity:0},{y:0,opacity:1,duration:.5,stagger:.035,ease:'power3.out',clearProps:'transform,opacity'});}},root);
   return()=>ctx.revert();
  },[isActive,detail]);
  const back=()=>{restoreFocus.current=true;if(openedHere.current){openedHere.current=false;history.back();}else{location.hash='work';}};
